@@ -10,4 +10,5 @@ public class AppDbContext : DbContext
     // Đại diện cho bảng TrackingLogs trong Database
     public DbSet<TrackingLog> TrackingLogs { get; set; }
     public DbSet<ParkingSpot> ParkingSpots { get; set; }
+    public DbSet<User> Users { get; set; }
 }

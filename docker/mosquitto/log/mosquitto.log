@@ -69,3 +69,15 @@
 1782126882: mosquitto version 2.0.15 running
 1782127294: mosquitto version 2.0.15 terminating
 1782127294: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782127296: mosquitto version 2.0.15 starting
+1782127296: Config loaded from /mosquitto/config/mosquitto.conf.
+1782127296: Opening ipv4 listen socket on port 1883.
+1782127296: mosquitto version 2.0.15 running
+1782127370: New connection from 172.18.0.1:59100 on port 1883.
+1782127370: New client connected from 172.18.0.1:59100 as DotNet_Backend_7ef46504-6048-448e-810d-afcf3b727fc2 (p2, c1, k15).
+1782127476: New connection from 172.18.0.1:54392 on port 1883.
+1782127476: New client connected from 172.18.0.1:54392 as Multi_Fleet_Simulator (p2, c1, k60).
+1782128974: Client DotNet_Backend_7ef46504-6048-448e-810d-afcf3b727fc2 disconnected.
+1782129077: New connection from 172.18.0.1:33918 on port 1883.
+1782129077: New client connected from 172.18.0.1:33918 as DotNet_Backend_8b3d235a-bea8-4324-81fc-d73a11c3a78d (p2, c1, k15).
+1782129096: Saving in-memory database to /mosquitto/data//mosquitto.db.

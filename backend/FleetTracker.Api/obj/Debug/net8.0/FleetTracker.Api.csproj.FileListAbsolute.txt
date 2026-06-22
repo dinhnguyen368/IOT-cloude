@@ -139,3 +139,12 @@ D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker
 D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Api\obj\Debug\net8.0\FleetTracker.Api.pdb
 D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Api\obj\Debug\net8.0\FleetTracker.Api.genruntimeconfig.cache
 D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Api\obj\Debug\net8.0\ref\FleetTracker.Api.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Api\obj\Debug\net8.0\FleetTracker.Api.sourcelink.json
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Api\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Api\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Api\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll

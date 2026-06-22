@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Polyline, Popup, Rectangle } from 'rea
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip, Legend } from 'recharts';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import * as signalR from '@microsoft/signalr'; // <-- IMPORT SIGNALR ĐỂ NHẬN DỮ LIỆU REAL-TIME
 
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -14,7 +15,7 @@ const AlertSpeedIcon = L.icon({
   iconSize: [25, 41], iconAnchor: [12, 41]
 });
 const AlertTempIcon = L.icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png', // Màu cam cho hỏng máy lạnh
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png', 
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
   iconSize: [25, 41], iconAnchor: [12, 41]
 });
@@ -41,6 +42,7 @@ export default function App() {
   const [geofenceAlerts, setGeofenceAlerts] = useState<string[]>([]);
   const previousZoneStatus = useRef<Record<string, boolean>>({});
 
+  // Hàm gọi API chỉ dùng 1 lần duy nhất lúc khởi động web
   const fetchData = async () => {
     try {
       const [histRes, anlRes, parkRes] = await Promise.all([
@@ -54,10 +56,35 @@ export default function App() {
     } catch (e) { console.error("Lỗi API:", e); }
   };
 
+  // --- LOGIC WEBSOCKETS (SIGNALR) ---
   useEffect(() => {
+    // 1. Tải dữ liệu ban đầu
     fetchData();
-    const interval = setInterval(fetchData, 3000);
-    return () => clearInterval(interval);
+
+    // 2. Thiết lập kết nối WebSockets với Backend
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl("http://localhost:5230/trackingHub")
+      .withAutomaticReconnect()
+      .build();
+
+    connection.start()
+      .then(() => console.log("🟢 Đã kết nối WebSockets thời gian thực thành công!"))
+      .catch(err => console.error("🔴 Lỗi kết nối WebSockets:", err));
+
+    // 3. Lắng nghe Tọa độ mới từ Backend đẩy xuống
+    connection.on("ReceiveNewLog", (newLog) => {
+      setHistory(prevHistory => [newLog, ...prevHistory]);
+    });
+
+    // 4. Lắng nghe Thống kê phân tích mới từ Backend đẩy xuống
+    connection.on("UpdateAnalytics", (newAnalytics) => {
+      setAnalytics(newAnalytics);
+    });
+
+    // 5. Ngắt kết nối khi tắt trang web
+    return () => {
+      connection.stop();
+    };
   }, []);
 
   const groupedData: Record<string, any[]> = history.reduce((acc, curr) => {
@@ -68,8 +95,8 @@ export default function App() {
   const vehicleIds = Object.keys(groupedData);
   
   // KIỂM TRA CẢNH BÁO
-  const overSpeedingTrucks = vehicleIds.map(id => groupedData[id][0]).filter(t => t.speed > 60);
-  const brokenColdChainTrucks = vehicleIds.map(id => groupedData[id][0]).filter(t => t.temperature > 8);
+  const overSpeedingTrucks = vehicleIds.map(id => groupedData[id][0]).filter(t => t && t.speed > 60);
+  const brokenColdChainTrucks = vehicleIds.map(id => groupedData[id][0]).filter(t => t && t.temperature > 8);
 
   useEffect(() => {
     const newAlerts: string[] = [];
@@ -92,7 +119,7 @@ export default function App() {
     try {
       const res = await axios.post(`http://localhost:5230/api/parking/book?vehicleId=${driverVehicleId}&spotId=${spotId}`);
       alert(`✅ ${res.data.message}`);
-      fetchData();
+      fetchData(); // Vẫn gọi lại API để làm mới riêng phần bãi đỗ xe
     } catch (error: any) { alert(`❌ Lỗi: ${error.response?.data || 'Không thể đặt chỗ'}`); }
   };
 
@@ -125,11 +152,11 @@ export default function App() {
       {/* KHUNG CẢNH BÁO CHUỖI LẠNH (COLD CHAIN) */}
       {brokenColdChainTrucks.length > 0 && (
         <div style={{ backgroundColor: '#e67e22', color: 'white', padding: '10px', borderRadius: '8px', marginBottom: '20px', textAlign: 'center', animation: 'blink 1.5s infinite' }}>
-          ❄️ <strong>SỰ CỐ CHUỖI LẠNH:</strong> Lô hàng trên {brokenColdChainTrucks.length} xe đang gặp nguy hiểm do máy lạnh hỏng (Nhiệt độ ; 8°C)!
+          ❄️ <strong>SỰ CỐ CHUỖI LẠNH:</strong> Lô hàng trên {brokenColdChainTrucks.length} xe đang gặp nguy hiểm do máy lạnh hỏng (Nhiệt độ &gt; 8°C)!
         </div>
       )}
 
-      {/* THẺ THỐNG KÊ (GIỮ NGUYÊN) */}
+      {/* THẺ THỐNG KÊ */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '15px', marginBottom: '20px' }}>
         {[
           { label: 'Điểm An Toàn', val: `${analytics.driverScore}/100`, color: '#27ae60', icon: '🛡️' },
@@ -167,7 +194,7 @@ export default function App() {
               // Chọn Icon phù hợp
               let currentIcon = DefaultIcon;
               if (isOverSpeeding) currentIcon = AlertSpeedIcon;
-              if (isBrokenColdChain) currentIcon = AlertTempIcon; // Ưu tiên cảnh báo nhiệt độ
+              if (isBrokenColdChain) currentIcon = AlertTempIcon; 
 
               return (
                 <div key={id}>

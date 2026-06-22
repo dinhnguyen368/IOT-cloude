@@ -9,3 +9,4 @@ D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker
 D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\obj\Debug\net8.0\refint\FleetTracker.Core.dll
 D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\obj\Debug\net8.0\FleetTracker.Core.pdb
 D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\obj\Debug\net8.0\ref\FleetTracker.Core.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\obj\Debug\net8.0\FleetTracker.Core.sourcelink.json

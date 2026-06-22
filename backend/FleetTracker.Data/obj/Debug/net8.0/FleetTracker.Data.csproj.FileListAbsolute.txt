@@ -13,3 +13,4 @@ D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker
 D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\refint\FleetTracker.Data.dll
 D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\FleetTracker.Data.pdb
 D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\ref\FleetTracker.Data.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\FleetTracker.Data.sourcelink.json
