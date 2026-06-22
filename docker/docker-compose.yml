@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # 1. Cơ sở dữ liệu PostgreSQL
+  fleet_db:
+    image: postgres:15-alpine
+    container_name: iot_fleet_postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secretpassword123
+      POSTGRES_DB: FleetLogisticsDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # 2. Máy chủ MQTT riêng (Mosquitto)
+  mqtt_broker:
+    image: eclipse-mosquitto:2.0.15
+    container_name: iot_fleet_mqtt
+    ports:
+      - "1883:1883"
+      - "9001:9001" # Cổng cho WebSockets (Dùng cho giao diện web sau này)
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

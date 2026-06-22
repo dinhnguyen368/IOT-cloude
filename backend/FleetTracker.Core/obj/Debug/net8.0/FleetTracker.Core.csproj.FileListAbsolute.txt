@@ -1,0 +1,11 @@
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\bin\Debug\net8.0\FleetTracker.Core.deps.json
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\bin\Debug\net8.0\FleetTracker.Core.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\bin\Debug\net8.0\FleetTracker.Core.pdb
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\obj\Debug\net8.0\FleetTracker.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\obj\Debug\net8.0\FleetTracker.Core.AssemblyInfoInputs.cache
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\obj\Debug\net8.0\FleetTracker.Core.AssemblyInfo.cs
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\obj\Debug\net8.0\FleetTracker.Core.csproj.CoreCompileInputs.cache
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\obj\Debug\net8.0\FleetTracker.Core.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\obj\Debug\net8.0\refint\FleetTracker.Core.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\obj\Debug\net8.0\FleetTracker.Core.pdb
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Core\obj\Debug\net8.0\ref\FleetTracker.Core.dll

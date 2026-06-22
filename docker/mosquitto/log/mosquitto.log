@@ -1,0 +1,71 @@
+1782042835: mosquitto version 2.0.15 starting
+1782042835: Config loaded from /mosquitto/config/mosquitto.conf.
+1782042835: Opening ipv4 listen socket on port 1883.
+1782042835: mosquitto version 2.0.15 running
+1782042927: New connection from 172.18.0.1:58334 on port 1883.
+1782042927: New connection from 172.18.0.1:58340 on port 1883.
+1782042927: Client <unknown> disconnected due to malformed packet.
+1782042927: Client <unknown> disconnected due to malformed packet.
+1782042927: New connection from 172.18.0.1:58344 on port 1883.
+1782042927: Client <unknown> disconnected due to malformed packet.
+1782042928: New connection from 172.18.0.1:58358 on port 1883.
+1782042928: New connection from 172.18.0.1:58368 on port 1883.
+1782042928: Client <unknown> disconnected due to malformed packet.
+1782042928: Client <unknown> disconnected due to malformed packet.
+1782042928: New connection from 172.18.0.1:58372 on port 1883.
+1782042928: Client <unknown> disconnected due to malformed packet.
+1782043509: New connection from 172.18.0.1:55478 on port 1883.
+1782043509: New client connected from 172.18.0.1:55478 as DotNet_Backend_a9a4278f-da35-4af2-97c0-1eb3e598d833 (p2, c1, k15).
+1782043620: Client DotNet_Backend_a9a4278f-da35-4af2-97c0-1eb3e598d833 disconnected.
+1782043624: New connection from 172.18.0.1:33890 on port 1883.
+1782043624: New client connected from 172.18.0.1:33890 as DotNet_Backend_0e4832ff-28c5-4209-b423-935ae282573b (p2, c1, k15).
+1782043692: New connection from 172.18.0.1:35848 on port 1883.
+1782043692: New client connected from 172.18.0.1:35848 as Truck_01_Simulator (p2, c1, k60).
+1782043713: Client DotNet_Backend_0e4832ff-28c5-4209-b423-935ae282573b disconnected.
+1782043717: New connection from 172.18.0.1:44866 on port 1883.
+1782043717: New client connected from 172.18.0.1:44866 as DotNet_Backend_899adb75-2590-407c-8237-ecd58732f344 (p2, c1, k15).
+1782043722: Client DotNet_Backend_899adb75-2590-407c-8237-ecd58732f344 disconnected.
+1782043738: Client Truck_01_Simulator disconnected.
+1782043795: New connection from 172.18.0.1:35866 on port 1883.
+1782043795: New client connected from 172.18.0.1:35866 as DotNet_Backend_f1002c1d-5944-4673-b745-1c0f8a0ff9c6 (p2, c1, k15).
+1782043802: New connection from 172.18.0.1:40716 on port 1883.
+1782043802: New client connected from 172.18.0.1:40716 as Truck_01_Simulator (p2, c1, k60).
+1782043841: Client Truck_01_Simulator disconnected.
+1782043889: Client DotNet_Backend_f1002c1d-5944-4673-b745-1c0f8a0ff9c6 disconnected.
+1782043996: New connection from 172.18.0.1:50324 on port 1883.
+1782043996: New client connected from 172.18.0.1:50324 as DotNet_Backend_63f85557-8fc7-4ac4-bdab-95c4e522f9ce (p2, c1, k15).
+1782043998: Client DotNet_Backend_63f85557-8fc7-4ac4-bdab-95c4e522f9ce disconnected.
+1782044049: New connection from 172.18.0.1:47432 on port 1883.
+1782044049: New client connected from 172.18.0.1:47432 as DotNet_Backend_dd6443ee-a743-44f6-bc4f-8829dc84184e (p2, c1, k15).
+1782044131: New connection from 172.18.0.1:38158 on port 1883.
+1782044131: New client connected from 172.18.0.1:38158 as Truck_01_Simulator (p2, c1, k60).
+1782044138: Client DotNet_Backend_dd6443ee-a743-44f6-bc4f-8829dc84184e disconnected.
+1782044147: New connection from 172.18.0.1:41456 on port 1883.
+1782044147: New client connected from 172.18.0.1:41456 as DotNet_Backend_9a026721-a7a0-4ab4-bd9c-ab8f1b2cbe0f (p2, c1, k15).
+1782044401: Client DotNet_Backend_9a026721-a7a0-4ab4-bd9c-ab8f1b2cbe0f disconnected.
+1782044406: New connection from 172.18.0.1:38870 on port 1883.
+1782044406: New client connected from 172.18.0.1:38870 as DotNet_Backend_6bddba74-a69f-4fa2-a99f-278535938192 (p2, c1, k15).
+1782044635: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782045149: Client DotNet_Backend_6bddba74-a69f-4fa2-a99f-278535938192 disconnected.
+1782045459: New connection from 172.18.0.1:54380 on port 1883.
+1782045459: New client connected from 172.18.0.1:54380 as DotNet_Backend_95a0951c-76c7-4707-9a07-7a8bad73bf0b (p2, c1, k15).
+1782045743: Client DotNet_Backend_95a0951c-76c7-4707-9a07-7a8bad73bf0b disconnected.
+1782045753: New connection from 172.18.0.1:34838 on port 1883.
+1782045753: New client connected from 172.18.0.1:34838 as DotNet_Backend_dcab79dc-a084-4410-876e-4cbb1c2fa33c (p2, c1, k15).
+1782046278: Client DotNet_Backend_dcab79dc-a084-4410-876e-4cbb1c2fa33c disconnected.
+1782046291: New connection from 172.18.0.1:38212 on port 1883.
+1782046291: New client connected from 172.18.0.1:38212 as DotNet_Backend_290e701e-cdf5-4521-8688-5c82786c06b7 (p2, c1, k15).
+1782046436: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782046571: Client DotNet_Backend_290e701e-cdf5-4521-8688-5c82786c06b7 disconnected.
+1782046610: New connection from 172.18.0.1:44952 on port 1883.
+1782046610: New client connected from 172.18.0.1:44952 as DotNet_Backend_f9673416-c2ed-4579-9de0-6b59b790df2e (p2, c1, k15).
+1782046670: Client DotNet_Backend_f9673416-c2ed-4579-9de0-6b59b790df2e closed its connection.
+1782046670: Client Truck_01_Simulator closed its connection.
+1782046678: mosquitto version 2.0.15 terminating
+1782046678: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782126882: mosquitto version 2.0.15 starting
+1782126882: Config loaded from /mosquitto/config/mosquitto.conf.
+1782126882: Opening ipv4 listen socket on port 1883.
+1782126882: mosquitto version 2.0.15 running
+1782127294: mosquitto version 2.0.15 terminating
+1782127294: Saving in-memory database to /mosquitto/data//mosquitto.db.

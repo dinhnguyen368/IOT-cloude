@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "RVn8RUhOAy7lUwvZif2cJo+waanrF2cu4qcr5K9UVeM=",
+  "Source": "FleetTracker.Api",
+  "BasePath": "_content/FleetTracker.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

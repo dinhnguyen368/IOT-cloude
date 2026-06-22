@@ -1,0 +1,15 @@
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\bin\Debug\net8.0\FleetTracker.Data.deps.json
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\bin\Debug\net8.0\FleetTracker.Data.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\bin\Debug\net8.0\FleetTracker.Data.pdb
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\bin\Debug\net8.0\FleetTracker.Core.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\bin\Debug\net8.0\FleetTracker.Core.pdb
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\FleetTracker.Data.csproj.AssemblyReference.cache
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\FleetTracker.Data.GeneratedMSBuildEditorConfig.editorconfig
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\FleetTracker.Data.AssemblyInfoInputs.cache
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\FleetTracker.Data.AssemblyInfo.cs
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\FleetTracker.Data.csproj.CoreCompileInputs.cache
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\FleetTra.DC03760D.Up2Date
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\FleetTracker.Data.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\refint\FleetTracker.Data.dll
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\FleetTracker.Data.pdb
+D:\codes\dientoandamamy\project\IoT_Logistics_FleetTracking\backend\FleetTracker.Data\obj\Debug\net8.0\ref\FleetTracker.Data.dll
