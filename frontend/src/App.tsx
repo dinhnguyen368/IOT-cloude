@@ -1,91 +1,103 @@
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { MapContainer, TileLayer, Marker, Polyline, Popup, Rectangle } from 'react-leaflet';
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip, Legend } from 'recharts';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip } from 'recharts';
+import * as signalR from '@microsoft/signalr';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import * as signalR from '@microsoft/signalr'; // <-- IMPORT SIGNALR ĐỂ NHẬN DỮ LIỆU REAL-TIME
 
+// --- CẤU HÌNH ICON BẢN ĐỒ ---
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 const DefaultIcon = L.icon({ iconUrl: icon, shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
-const AlertSpeedIcon = L.icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41], iconAnchor: [12, 41]
-});
-const AlertTempIcon = L.icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png', 
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41], iconAnchor: [12, 41]
-});
-const ParkingIcon = L.icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41], iconAnchor: [12, 41]
-});
+const AlertSpeedIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
+const AlertTempIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png', shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
+const ParkingIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png', shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
 
-// --- CẤU HÌNH GEOFENCE ---
-const GEOFENCE_BOUNDS: [number, number][] = [
-  [10.7700, 106.6950], [10.7800, 106.7050]
-];
-const isInsideGeofence = (lat: number, lng: number) => {
-  return lat >= GEOFENCE_BOUNDS[0][0] && lat <= GEOFENCE_BOUNDS[1][0] && lng >= GEOFENCE_BOUNDS[0][1] && lng <= GEOFENCE_BOUNDS[1][1];
-};
+// --- CẤU HÌNH KHÔNG GIAN GEOFENCE & MÀU SẮC TOÀN CỤC ---
+const GEOFENCE_BOUNDS: [number, number][] = [[10.7700, 106.6950], [10.7800, 106.7050]];
+const isInsideGeofence = (lat: number, lng: number) => lat >= GEOFENCE_BOUNDS[0][0] && lat <= GEOFENCE_BOUNDS[1][0] && lng >= GEOFENCE_BOUNDS[0][1] && lng <= GEOFENCE_BOUNDS[1][1];
+
+// Bảng màu giao diện sáng (Light Theme Palette)
+const PIE_COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#ef4444'];
 
 export default function App() {
+  const [auth, setAuth] = useState<{ token: string, role: string, username: string, vehicleId: string | null } | null>(
+    JSON.parse(localStorage.getItem('fleet_auth') || 'null')
+  );
+  
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  const [activeTab, setActiveTab] = useState<'monitor' | 'devices' | 'parking'>('monitor');
+
   const [history, setHistory] = useState<any[]>([]);
   const [analytics, setAnalytics] = useState({ averageSpeed: 0, maxSpeed: 0, driverScore: 100, totalRecords: 0, estimatedFuel: 0 });
   const [parkingSpots, setParkingSpots] = useState<any[]>([]);
-  const [driverVehicleId, setDriverVehicleId] = useState<string>('TRUCK_HCM_01');
-  
   const [geofenceAlerts, setGeofenceAlerts] = useState<string[]>([]);
   const previousZoneStatus = useRef<Record<string, boolean>>({});
 
-  // Hàm gọi API chỉ dùng 1 lần duy nhất lúc khởi động web
-  const fetchData = async () => {
+  const [devices, setDevices] = useState([
+    { id: 'GW-TRUCK-01', name: 'Bộ định vị Xe 01', status: 'Online', battery: 92, rssi: -65, lastSeen: 'Vừa xong' },
+    { id: 'GW-TRUCK-02', name: 'Bộ định vị Xe 02', status: 'Online', battery: 85, rssi: -58, lastSeen: 'Vừa xong' },
+    { id: 'GW-TRUCK-03', name: 'Bộ định vị Xe 03', status: 'Offline', battery: 0, rssi: -110, lastSeen: '5 phút trước' },
+  ]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      const [histRes, anlRes, parkRes] = await Promise.all([
-        axios.get('http://localhost:5230/api/tracking/history'),
-        axios.get('http://localhost:5230/api/tracking/analytics'),
-        axios.get('http://localhost:5230/api/parking')
-      ]);
-      setHistory(histRes.data);
-      setAnalytics(anlRes.data);
-      setParkingSpots(parkRes.data);
-    } catch (e) { console.error("Lỗi API:", e); }
+      const res = await axios.post('http://localhost:5230/api/auth/login', { username, password });
+      const userAuth = { token: res.data.token, role: res.data.role, username: res.data.username, vehicleId: res.data.vehicleId };
+      localStorage.setItem('fleet_auth', JSON.stringify(userAuth));
+      setAuth(userAuth);
+      setLoginError('');
+    } catch (err) { setLoginError('Tài khoản hoặc mật khẩu không đúng!'); }
   };
 
-  // --- LOGIC WEBSOCKETS (SIGNALR) ---
+  const handleLogout = () => {
+    localStorage.removeItem('fleet_auth');
+    setAuth(null);
+  };
+
+  const handleRebootDevice = (id: string) => {
+    alert(`📡 Đã gửi lệnh [REBOOT_COMMAND] qua MQTT xuống thiết bị ${id}. Thiết bị đang tái khởi động...`);
+  };
+
   useEffect(() => {
-    // 1. Tải dữ liệu ban đầu
+    if (!auth) return;
+    const headers = { Authorization: `Bearer ${auth.token}` };
+
+    const fetchData = async () => {
+      try {
+        const histRes = await axios.get('http://localhost:5230/api/tracking/history', { headers });
+        setHistory(histRes.data);
+        const parkRes = await axios.get('http://localhost:5230/api/parking', { headers });
+        setParkingSpots(parkRes.data);
+        if (auth.role === 'Admin') {
+          const anlRes = await axios.get('http://localhost:5230/api/tracking/analytics', { headers });
+          setAnalytics(anlRes.data);
+        }
+      } catch (e: any) { if (e.response?.status === 401) handleLogout(); }
+    };
+
     fetchData();
 
-    // 2. Thiết lập kết nối WebSockets với Backend
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5230/trackingHub")
+      .withUrl("http://localhost:5230/trackingHub", { accessTokenFactory: () => auth.token })
       .withAutomaticReconnect()
       .build();
 
-    connection.start()
-      .then(() => console.log("🟢 Đã kết nối WebSockets thời gian thực thành công!"))
-      .catch(err => console.error("🔴 Lỗi kết nối WebSockets:", err));
-
-    // 3. Lắng nghe Tọa độ mới từ Backend đẩy xuống
+    connection.start().catch(err => console.error("SignalR Lỗi kết nối:", err));
+    
     connection.on("ReceiveNewLog", (newLog) => {
-      setHistory(prevHistory => [newLog, ...prevHistory]);
+      setHistory(prev => [newLog, ...prev]);
+      setDevices(prev => prev.map(d => d.id === `GW-${newLog.vehicleId}` ? { ...d, status: 'Online', rssi: -50 - Math.floor(Math.random() * 20), lastSeen: 'Vừa xong' } : d));
     });
+    if (auth.role === 'Admin') { connection.on("UpdateAnalytics", (newAnl) => setAnalytics(newAnl)); }
 
-    // 4. Lắng nghe Thống kê phân tích mới từ Backend đẩy xuống
-    connection.on("UpdateAnalytics", (newAnalytics) => {
-      setAnalytics(newAnalytics);
-    });
-
-    // 5. Ngắt kết nối khi tắt trang web
-    return () => {
-      connection.stop();
-    };
-  }, []);
+    return () => { connection.stop(); };
+  }, [auth]);
 
   const groupedData: Record<string, any[]> = history.reduce((acc, curr) => {
     if (!acc[curr.vehicleId]) acc[curr.vehicleId] = [];
@@ -93,10 +105,6 @@ export default function App() {
     return acc;
   }, {});
   const vehicleIds = Object.keys(groupedData);
-  
-  // KIỂM TRA CẢNH BÁO
-  const overSpeedingTrucks = vehicleIds.map(id => groupedData[id][0]).filter(t => t && t.speed > 60);
-  const brokenColdChainTrucks = vehicleIds.map(id => groupedData[id][0]).filter(t => t && t.temperature > 8);
 
   useEffect(() => {
     const newAlerts: string[] = [];
@@ -106,162 +114,279 @@ export default function App() {
       const currentlyInside = isInsideGeofence(latestPoint.latitude, latestPoint.longitude);
       const wasInside = previousZoneStatus.current[id];
       if (wasInside !== undefined && wasInside !== currentlyInside) {
-        const time = new Date(latestPoint.timestamp).toLocaleTimeString();
-        const action = currentlyInside ? '📥 VỪA ĐI VÀO' : '📤 VỪA RỜI KHỎI';
-        newAlerts.push(`[${time}] Xe ${id} ${action} Tổng Kho Quận 1!`);
+        const action = currentlyInside ? '📥 VÀO KHU VỰC' : '📤 RỜI KHU VỰC';
+        newAlerts.push(`[${new Date(latestPoint.timestamp).toLocaleTimeString()}] ${id} ${action} Tổng Kho Quận 1`);
       }
       previousZoneStatus.current[id] = currentlyInside;
     });
-    if (newAlerts.length > 0) setGeofenceAlerts(prev => [...newAlerts, ...prev].slice(0, 5));
+    if (newAlerts.length > 0) setGeofenceAlerts(prev => [...newAlerts, ...prev].slice(0, 8));
   }, [history]);
 
   const handleBookSpot = async (spotId: number) => {
+    if (!auth?.vehicleId) return alert("Chỉ tài xế mới có quyền điều khiển bãi đỗ!");
     try {
-      const res = await axios.post(`http://localhost:5230/api/parking/book?vehicleId=${driverVehicleId}&spotId=${spotId}`);
-      alert(`✅ ${res.data.message}`);
-      fetchData(); // Vẫn gọi lại API để làm mới riêng phần bãi đỗ xe
-    } catch (error: any) { alert(`❌ Lỗi: ${error.response?.data || 'Không thể đặt chỗ'}`); }
+      await axios.post(`http://localhost:5230/api/parking/book?vehicleId=${auth.vehicleId}&spotId=${spotId}`, {}, {
+        headers: { Authorization: `Bearer ${auth.token}` }
+      });
+      alert(`✅ Đã đặt thành công bãi đỗ số ${spotId}!`);
+      const parkRes = await axios.get('http://localhost:5230/api/parking', { headers: { Authorization: `Bearer ${auth.token}` } });
+      setParkingSpots(parkRes.data);
+    } catch (error: any) { alert("Lỗi gửi lệnh."); }
   };
 
-  const pieData = vehicleIds.map(id => ({ name: id, value: groupedData[id].length }));
-  const PIE_COLORS = ['#3498db', '#2ecc71', '#f1c40f', '#e74c3c'];
+  // ==============================================
+  // GIAO DIỆN 1: LOGIN (LIGHT THEME)
+  // ==============================================
+  if (!auth) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f1f5f9', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+        <div style={{ background: 'white', padding: '40px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', width: '360px', color: '#1e293b' }}>
+          <h2 style={{ textAlign: 'center', color: '#0ea5e9', letterSpacing: '1px', marginBottom: '5px' }}>🌐 OMNI LOGISTICS</h2>
+          <p style={{ textAlign: 'center', color: '#64748b', marginBottom: '35px', fontSize: '13px' }}>Hệ thống quản lý và điều hành thông minh</p>
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', color: '#475569', marginBottom: '5px', fontWeight: 'bold' }}>TÀI KHOẢN</label>
+              <input type="text" placeholder="admin hoặc driver1" value={username} onChange={e => setUsername(e.target.value)} required style={{ width: '100%', boxSizing: 'border-box', padding: '12px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', color: '#0f172a', outline: 'none' }} />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', color: '#475569', marginBottom: '5px', fontWeight: 'bold' }}>MẬT KHẨU</label>
+              <input type="password" placeholder="123" value={password} onChange={e => setPassword(e.target.value)} required style={{ width: '100%', boxSizing: 'border-box', padding: '12px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', color: '#0f172a', outline: 'none' }} />
+            </div>
+            {loginError && <span style={{ color: '#ef4444', fontSize: '13px', textAlign: 'center' }}>❌ {loginError}</span>}
+            <button type="submit" style={{ background: '#0ea5e9', color: 'white', padding: '14px', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px', boxShadow: '0 4px 6px rgba(14, 165, 233, 0.2)' }}>ĐĂNG NHẬP</button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
+  const overSpeedingTrucks = vehicleIds.map(id => groupedData[id][0]).filter(t => t && t.speed > 60);
+  const brokenColdChainTrucks = vehicleIds.map(id => groupedData[id][0]).filter(t => t && t.temperature > 8);
+  const chartData = history.slice(0, 15).reverse().map(h => ({ time: new Date(h.timestamp).toLocaleTimeString(), Nhiệt_Độ: h.temperature, Tốc_Độ: h.speed }));
+
+  // ==============================================
+  // GIAO DIỆN 2: DASHBOARD (LIGHT THEME)
+  // ==============================================
   return (
-    <div style={{ backgroundColor: '#f4f7f6', minHeight: '100vh', color: '#2c3e50', padding: '20px', fontFamily: 'sans-serif' }}>
+    <div style={{ backgroundColor: '#f1f5f9', minHeight: '100vh', color: '#0f172a', fontFamily: 'system-ui, -apple-system, sans-serif', padding: '0 0 20px 0' }}>
       
-      {/* HEADER & TÀI XẾ */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1 style={{ margin: 0, color: '#2c3e50' }}>📊 OMNI-LOGISTICS DASHBOARD</h1>
-        <div style={{ background: '#f1c40f', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold' }}>
-          👨‍✈️ Đang lái: 
-          <select value={driverVehicleId} onChange={(e) => setDriverVehicleId(e.target.value)} style={{ marginLeft: '10px', padding: '5px' }}>
-            <option value="TRUCK_HCM_01">TRUCK_HCM_01</option>
-            <option value="TRUCK_HCM_02">TRUCK_HCM_02</option>
-            <option value="TRUCK_HCM_03">TRUCK_HCM_03</option>
-          </select>
-        </div>
-      </div>
-
-      {/* KHUNG CẢNH BÁO TỐC ĐỘ */}
-      {overSpeedingTrucks.length > 0 && (
-        <div style={{ backgroundColor: '#e74c3c', color: 'white', padding: '10px', borderRadius: '8px', marginBottom: '10px', textAlign: 'center', animation: 'blink 1s infinite' }}>
-          ⚠️ <strong>CẢNH BÁO TỐC ĐỘ:</strong> Có {overSpeedingTrucks.length} xe đang vượt quá 60 km/h ({overSpeedingTrucks.map(t=>t.vehicleId).join(', ')})!
-        </div>
-      )}
-
-      {/* KHUNG CẢNH BÁO CHUỖI LẠNH (COLD CHAIN) */}
-      {brokenColdChainTrucks.length > 0 && (
-        <div style={{ backgroundColor: '#e67e22', color: 'white', padding: '10px', borderRadius: '8px', marginBottom: '20px', textAlign: 'center', animation: 'blink 1.5s infinite' }}>
-          ❄️ <strong>SỰ CỐ CHUỖI LẠNH:</strong> Lô hàng trên {brokenColdChainTrucks.length} xe đang gặp nguy hiểm do máy lạnh hỏng (Nhiệt độ &gt; 8°C)!
-        </div>
-      )}
-
-      {/* THẺ THỐNG KÊ */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '15px', marginBottom: '20px' }}>
-        {[
-          { label: 'Điểm An Toàn', val: `${analytics.driverScore}/100`, color: '#27ae60', icon: '🛡️' },
-          { label: 'Nhiên Liệu', val: `${analytics.estimatedFuel} Lít`, color: '#d35400', icon: '⛽' },
-          { label: 'Tốc Độ TB', val: `${analytics.averageSpeed} km/h`, color: '#2980b9', icon: '⏱️' },
-          { label: 'Tốc Độ Max', val: `${analytics.maxSpeed} km/h`, color: '#c0392b', icon: '🚀' },
-          { label: 'Tổng Bản Ghi', val: analytics.totalRecords, color: '#8e44ad', icon: '📡' }
-        ].map((c, i) => (
-          <div key={i} style={{ background: 'white', padding: '15px', borderRadius: '8px', textAlign: 'center', borderBottom: `4px solid ${c.color}`, boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-            <div style={{ fontSize: '20px' }}>{c.icon}</div>
-            <p style={{ margin: '5px 0', fontSize: '12px', fontWeight: 'bold', color: '#7f8c8d' }}>{c.label.toUpperCase()}</p>
-            <h3 style={{ margin: 0, color: c.color }}>{c.val}</h3>
-          </div>
-        ))}
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px' }}>
-        
-        {/* BẢN ĐỒ */}
-        <div style={{ height: '550px', background: 'white', borderRadius: '8px', padding: '10px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
-          <MapContainer center={[10.79, 106.68]} zoom={13} style={{ height: '100%', borderRadius: '4px' }}>
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            
-            <Rectangle bounds={GEOFENCE_BOUNDS} pathOptions={{ color: '#8e44ad', fillColor: '#8e44ad', fillOpacity: 0.2 }}>
-              <Popup><strong>🏭 Tổng Kho Quận 1</strong></Popup>
-            </Rectangle>
-
-            {/* VẼ XE VỚI THÔNG TIN NHIỆT ĐỘ */}
-            {vehicleIds.map((id, index) => {
-              const path = groupedData[id];
-              const latest = path[0];
-              const isOverSpeeding = latest.speed > 60;
-              const isBrokenColdChain = latest.temperature > 8;
-              
-              // Chọn Icon phù hợp
-              let currentIcon = DefaultIcon;
-              if (isOverSpeeding) currentIcon = AlertSpeedIcon;
-              if (isBrokenColdChain) currentIcon = AlertTempIcon; 
-
-              return (
-                <div key={id}>
-                  <Marker position={[latest.latitude, latest.longitude]} icon={currentIcon}>
-                    <Popup>
-                      <strong style={{ fontSize: '16px', color: '#2c3e50' }}>{id}</strong> <br/><br/>
-                      🚚 Tốc độ: <span style={{color: isOverSpeeding ? 'red' : 'green', fontWeight:'bold'}}>{latest.speed} km/h</span><br/>
-                      ❄️ Nhiệt độ: <span style={{color: isBrokenColdChain ? 'red' : '#2980b9', fontWeight:'bold'}}>{latest.temperature} °C</span><br/>
-                      💧 Độ ẩm: <strong>{latest.humidity} %</strong>
-                    </Popup>
-                  </Marker>
-                  <Polyline positions={path.map(p => [p.latitude, p.longitude]) as any} color={PIE_COLORS[index % PIE_COLORS.length]} weight={4} opacity={0.8} />
-                </div>
-              );
-            })}
-
-            {/* VẼ BÃI ĐỖ XE */}
-            {parkingSpots.map((spot) => (
-              <Marker key={spot.id} position={[spot.latitude, spot.longitude]} icon={ParkingIcon}>
-                <Popup>
-                  <div style={{ textAlign: 'center' }}>
-                    <h4 style={{ margin: '0 0 5px 0' }}>{spot.name}</h4>
-                    {spot.isAvailable ? (
-                      <button onClick={() => handleBookSpot(spot.id)} style={{ background: '#27ae60', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}>Đặt Chỗ</button>
-                    ) : (
-                      <span style={{ color: 'red', fontSize: '12px' }}>Đã đặt bởi:<br/> {spot.bookedByVehicleId}</span>
-                    )}
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
-        </div>
-
-        {/* CỘT BÊN PHẢI (GEOFENCE LOG & PIE CHART) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* THANH TOPBAR */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'white', padding: '15px 30px', borderBottom: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+          <h2 style={{ margin: 0, color: '#0ea5e9', letterSpacing: '1px', fontSize: '20px', fontWeight: '800' }}>🚀 OMNI LOGISTICS</h2>
           
-          <div style={{ background: 'white', padding: '15px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', flexGrow: 1 }}>
-            <h3 style={{ margin: '0 0 15px 0', color: '#8e44ad', borderBottom: '2px solid #ecf0f1', paddingBottom: '10px' }}>
-              📍 Nhật Ký Ra/Vào Kho
-            </h3>
-            {geofenceAlerts.length === 0 ? (
-              <p style={{ color: '#7f8c8d', fontStyle: 'italic', fontSize: '14px' }}>Chưa có phương tiện nào di chuyển qua cổng kho...</p>
-            ) : (
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '14px' }}>
-                {geofenceAlerts.map((alert, idx) => (
-                  <li key={idx} style={{ padding: '8px 0', borderBottom: '1px dashed #bdc3c7', color: alert.includes('VÀO') ? '#27ae60' : '#d35400', fontWeight: 'bold' }}>
-                    {alert}
-                  </li>
-                ))}
-              </ul>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button onClick={() => setActiveTab('monitor')} style={{ background: activeTab === 'monitor' ? '#e0f2fe' : 'transparent', color: activeTab === 'monitor' ? '#0284c7' : '#64748b', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', transition: '0.2s' }}>📊 Giám Sát</button>
+            {auth.role === 'Admin' && (
+              <button onClick={() => setActiveTab('devices')} style={{ background: activeTab === 'devices' ? '#f3e8ff' : 'transparent', color: activeTab === 'devices' ? '#7e22ce' : '#64748b', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', transition: '0.2s' }}>🎛️ Thiết Bị</button>
             )}
+            <button onClick={() => setActiveTab('parking')} style={{ background: activeTab === 'parking' ? '#fef3c7' : 'transparent', color: activeTab === 'parking' ? '#d97706' : '#64748b', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', transition: '0.2s' }}>🅿️ Bãi Đỗ Xe</button>
           </div>
-
-          <div style={{ background: 'white', padding: '15px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', height: '250px' }}>
-            <h4 style={{ textAlign: 'center', margin: '0 0 10px 0', color: '#34495e' }}>Phân bổ Dữ liệu</h4>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} label>
-                  {pieData.map((_, index) => <Cell key={index} fill={PIE_COLORS[index % PIE_COLORS.length]} />)}
-                </Pie>
-                <RechartsTooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
         </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div style={{ textAlign: 'right' }}>
+            <span style={{ fontSize: '11px', color: '#64748b', display: 'block', fontWeight: 'bold' }}>XIN CHÀO</span>
+            <strong style={{ color: '#0f172a' }}>{auth.username.toUpperCase()} ({auth.role})</strong>
+          </div>
+          <button onClick={handleLogout} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold', boxShadow: '0 2px 4px rgba(239, 68, 68, 0.2)' }}>Đăng xuất</button>
+        </div>
+      </div>
+
+      <div style={{ padding: '20px 30px' }}>
+        
+        {/* BANNER CẢNH BÁO */}
+        {auth.role === 'Admin' && (
+          <>
+            {overSpeedingTrucks.length > 0 && <div style={{ background: '#fee2e2', border: '1px solid #f87171', color: '#b91c1c', padding: '12px 20px', borderRadius: '8px', marginBottom: '15px', fontWeight: 'bold', boxShadow: '0 2px 4px rgba(248, 113, 113, 0.1)' }}>🚨 CẢNH BÁO: Phát hiện {overSpeedingTrucks.length} phương tiện vượt quá tốc độ 60km/h ({overSpeedingTrucks.map(t=>t.vehicleId).join(', ')})!</div>}
+            {brokenColdChainTrucks.length > 0 && <div style={{ background: '#ffedd5', border: '1px solid #fb923c', color: '#c2410c', padding: '12px 20px', borderRadius: '8px', marginBottom: '15px', fontWeight: 'bold', boxShadow: '0 2px 4px rgba(251, 146, 60, 0.1)' }}>❄️ SỰ CỐ CHUỖI LẠNH: Lô hàng trên {brokenColdChainTrucks.length} xe đang gặp nguy hiểm (Nhiệt độ &gt; 8°C)!</div>}
+          </>
+        )}
+
+        {/* ======================= TAB 1: MONITOR ======================= */}
+        {activeTab === 'monitor' && (
+          <>
+            {/* THẺ THỐNG KÊ */}
+            {auth.role === 'Admin' ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '20px', marginBottom: '20px' }}>
+                {[
+                  { label: 'Điểm an toàn', val: `${analytics.driverScore}%`, color: '#10b981', alert: analytics.driverScore < 80 },
+                  { label: 'Nhiên liệu tiêu thụ', val: `${analytics.estimatedFuel} L`, color: '#f59e0b', alert: false },
+                  { label: 'Tốc độ trung bình', val: `${analytics.averageSpeed} km/h`, color: '#0ea5e9', alert: false },
+                  { label: 'Tốc độ tối đa', val: `${analytics.maxSpeed} km/h`, color: '#ef4444', alert: analytics.maxSpeed > 60 },
+                  { label: 'Tổng bản ghi IoT', val: analytics.totalRecords, color: '#8b5cf6', alert: false }
+                ].map((c, i) => (
+                  <div key={i} style={{ background: 'white', padding: '20px', borderRadius: '10px', borderLeft: `5px solid ${c.color}`, boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold' }}>{c.label.toUpperCase()}</span>
+                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: c.alert ? '#ef4444' : '#10b981' }}></span>
+                    </div>
+                    <h2 style={{ margin: '10px 0 0 0', color: '#0f172a', fontSize: '26px' }}>{c.val}</h2>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ background: '#ecfdf5', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #10b981', color: '#047857', fontWeight: 'bold' }}>
+                ℹ️ Chế độ Tài xế: Chỉ hiển thị dữ liệu và hành trình của phương tiện <strong>{auth.vehicleId}</strong>.
+              </div>
+            )}
+
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px' }}>
+              
+              {/* BẢN ĐỒ */}
+              <div style={{ height: '520px', background: 'white', borderRadius: '10px', padding: '10px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+                <MapContainer center={[10.79, 106.68]} zoom={13} style={{ height: '100%', borderRadius: '6px' }}>
+                  {/* Sử dụng CartoDB Light cho giao diện sáng */}
+                  <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png" attribution="CartoDB Light" />
+                  <Rectangle bounds={GEOFENCE_BOUNDS} pathOptions={{ color: '#8b5cf6', fillColor: '#8b5cf6', fillOpacity: 0.1 }}><Popup>Khu vực kiểm soát (Geofence)</Popup></Rectangle>
+
+                  {vehicleIds.map((id, index) => {
+                    if (auth.role === 'Driver' && id !== auth.vehicleId) return null;
+                    const path = groupedData[id];
+                    const latest = path[0];
+                    if (!latest) return null;
+
+                    let currentIcon = DefaultIcon;
+                    if (latest.speed > 60) currentIcon = AlertSpeedIcon;
+                    if (latest.temperature > 8) currentIcon = AlertTempIcon;
+
+                    return (
+                      <div key={id}>
+                        <Marker position={[latest.latitude, latest.longitude]} icon={currentIcon}>
+                          <Popup>
+                            <div style={{ color: '#0f172a' }}>
+                              <strong style={{ fontSize: '14px', color: '#0ea5e9' }}>{id}</strong><br/><br/>
+                              🚚 Tốc độ: <strong>{latest.speed} km/h</strong><br/>
+                              ❄️ Nhiệt độ: <strong>{latest.temperature}°C</strong>
+                            </div>
+                          </Popup>
+                        </Marker>
+                        <Polyline positions={path.map(p => [p.latitude, p.longitude]) as any} color={PIE_COLORS[index % PIE_COLORS.length]} weight={5} />
+                      </div>
+                    );
+                  })}
+
+                  {/* VẼ BÃI ĐỖ XE */}
+                  {parkingSpots.map((spot) => (
+                    <Marker key={spot.id} position={[spot.latitude, spot.longitude]} icon={ParkingIcon}>
+                      <Popup>
+                        <div style={{ textAlign: 'center', color: '#0f172a' }}>
+                          <h4 style={{ margin: '0 0 8px 0' }}>{spot.name}</h4>
+                          {spot.isAvailable ? (
+                            auth.role === 'Driver' ? (
+                              <button onClick={() => handleBookSpot(spot.id)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Đặt Chỗ</button>
+                            ) : <span style={{ color: '#10b981', fontWeight: 'bold' }}>Trống</span>
+                          ) : (
+                            <span style={{ color: '#ef4444', fontSize: '13px', fontWeight: 'bold' }}>Đã đặt bởi:<br/> {spot.bookedByVehicleId}</span>
+                          )}
+                        </div>
+                      </Popup>
+                    </Marker>
+                  ))}
+                </MapContainer>
+              </div>
+
+              {/* LOG GEOFENCE & BIỂU ĐỒ */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                
+                <div style={{ background: 'white', padding: '20px', borderRadius: '10px', border: '1px solid #e2e8f0', flexGrow: 1, overflowY: 'auto', height: '220px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+                  <h3 style={{ margin: '0 0 12px 0', color: '#8b5cf6', fontSize: '14px', borderBottom: '2px solid #f1f5f9', paddingBottom: '10px' }}>📍 NHẬT KÝ RA VÀO KHO</h3>
+                  {geofenceAlerts.length === 0 ? (
+                    <p style={{ color: '#94a3b8', fontSize: '13px', fontStyle: 'italic' }}>Chưa có phương tiện nào di chuyển qua cổng...</p>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px' }}>
+                      {geofenceAlerts.map((alert, idx) => (
+                        <div key={idx} style={{ padding: '8px', background: '#f8fafc', borderRadius: '6px', borderLeft: `4px solid ${alert.includes('VÀO') ? '#10b981' : '#f59e0b'}`, color: '#334155', fontWeight: '500' }}>{alert}</div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ background: 'white', padding: '20px', borderRadius: '10px', border: '1px solid #e2e8f0', height: '220px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+                  <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#64748b' }}>📈 BIẾN THIÊN NHIỆT ĐỘ THỜI GIAN THỰC</h4>
+                  <ResponsiveContainer width="100%" height={170}>
+                    <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
+                      <XAxis dataKey="time" tick={{ fontSize: 10, fill: '#64748b' }} stroke="#cbd5e1" />
+                      <YAxis tick={{ fontSize: 10, fill: '#64748b' }} stroke="#cbd5e1" />
+                      <RechartsTooltip contentStyle={{ background: 'white', border: '1px solid #cbd5e1', color: '#0f172a', fontSize: '12px', borderRadius: '6px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
+                      <Area type="monotone" dataKey="Nhiệt_Độ" stroke="#f59e0b" fill="rgba(245, 158, 11, 0.15)" strokeWidth={2} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* ======================= TAB 2: DEVICES ======================= */}
+        {activeTab === 'devices' && (
+          <div style={{ background: 'white', padding: '30px', borderRadius: '10px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+            <h3 style={{ marginTop: 0, color: '#7e22ce' }}>🎛️ QUẢN LÝ THIẾT BỊ GATEWAY</h3>
+            <p style={{ color: '#64748b', fontSize: '14px', marginTop: '-10px', marginBottom: '25px' }}>Giám sát trạng thái phần cứng và điều khiển từ xa các vi mạch gắn trên xe.</p>
+            
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', textAlign: 'left' }}>
+              <thead>
+                <tr style={{ borderBottom: '2px solid #cbd5e1', color: '#475569' }}>
+                  <th style={{ padding: '15px 10px' }}>MÃ THIẾT BỊ</th>
+                  <th>TÊN PHẦN CỨNG</th>
+                  <th>TRẠNG THÁI</th>
+                  <th>PIN</th>
+                  <th>SÓNG (RSSI)</th>
+                  <th>CẬP NHẬT CUỐI</th>
+                  <th>HÀNH ĐỘNG</th>
+                </tr>
+              </thead>
+              <tbody>
+                {devices.map((dev, i) => (
+                  <tr key={i} style={{ borderBottom: '1px solid #e2e8f0', background: i % 2 === 0 ? '#f8fafc' : 'white' }}>
+                    <td style={{ padding: '15px 10px', color: '#0ea5e9', fontWeight: 'bold' }}>{dev.id}</td>
+                    <td style={{ color: '#334155' }}>{dev.name}</td>
+                    <td>
+                      <span style={{ padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold', background: dev.status === 'Online' ? '#d1fae5' : '#fee2e2', color: dev.status === 'Online' ? '#059669' : '#b91c1c' }}>● {dev.status}</span>
+                    </td>
+                    <td style={{ color: '#334155' }}>{dev.status === 'Online' ? `${dev.battery}%` : 'N/A'}</td>
+                    <td style={{ color: dev.rssi > -70 ? '#10b981' : '#f59e0b', fontWeight: 'bold' }}>{dev.rssi} dBm</td>
+                    <td style={{ color: '#64748b' }}>{dev.lastSeen}</td>
+                    <td>
+                      <button onClick={() => handleRebootDevice(dev.id)} style={{ background: 'white', border: '1px solid #ef4444', color: '#ef4444', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold', transition: '0.2s' }}>Khởi động lại</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* ======================= TAB 3: PARKING ======================= */}
+        {activeTab === 'parking' && (
+          <div style={{ background: 'white', padding: '30px', borderRadius: '10px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+            <h3 style={{ marginTop: 0, color: '#d97706' }}>🅿️ HỆ THỐNG ĐIỀU PHỐI BÃI ĐỖ XE</h3>
+            <p style={{ color: '#64748b', fontSize: '14px', marginTop: '-10px', marginBottom: '25px' }}>Quản lý và đặt chỗ các bãi đỗ xe thông minh trên toàn thành phố.</p>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '25px' }}>
+              {parkingSpots.map((spot) => (
+                <div key={spot.id} style={{ background: '#f8fafc', padding: '25px', borderRadius: '12px', border: spot.isAvailable ? '1px solid #10b981' : '1px solid #ef4444', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                  <div style={{ fontSize: '36px', marginBottom: '15px' }}>🅿️</div>
+                  <h4 style={{ margin: '0 0 8px 0', color: '#0f172a', fontSize: '18px' }}>{spot.name}</h4>
+                  <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 20px 0' }}>Tọa độ GPS: {spot.latitude}, {spot.longitude}</p>
+                  
+                  {spot.isAvailable ? (
+                    <div>
+                      <div style={{ color: '#10b981', fontSize: '13px', fontWeight: 'bold', marginBottom: '15px' }}>🟢 SẴN SÀNG CHO THUÊ</div>
+                      <button onClick={() => handleBookSpot(spot.id)} style={{ width: '100%', background: '#10b981', color: 'white', border: 'none', padding: '12px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 6px rgba(16, 185, 129, 0.2)' }}>Gửi lệnh đặt bãi</button>
+                    </div>
+                  ) : (
+                    <div>
+                      <div style={{ color: '#ef4444', fontSize: '13px', fontWeight: 'bold', marginBottom: '15px' }}>🔴 ĐÃ CÓ XE ĐẶT CHỖ</div>
+                      <div style={{ padding: '10px', background: '#fee2e2', color: '#b91c1c', borderRadius: '6px', fontSize: '13px', fontWeight: 'bold', border: '1px solid #fca5a5' }}>Biển số xe: {spot.bookedByVehicleId}</div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );

@@ -8,6 +8,8 @@ using FleetTracker.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MQTTnet;
+using MQTTnet.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
             ValidateIssuer = false,
             ValidateAudience = false
+        };
+
+        // ==============================================================
+        // BẢN VÁ LỖI: BẮT TOKEN TỪ URL DÀNH RIÊNG CHO SIGNALR/WEBSOCKETS
+        // ==============================================================
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                // SignalR gửi token qua query string tên là "access_token"
+                var accessToken = context.Request.Query["access_token"];
+
+                // Nếu request đang gọi vào đường dẫn của Hub
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/trackingHub"))
+                {
+                    // Lấy token đó đưa cho hệ thống kiểm tra
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 builder.Services.AddAuthorization();
