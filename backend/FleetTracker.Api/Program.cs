@@ -194,6 +194,7 @@ app.MapPost("/api/tracking/status", async (string vehicleId, string status, AppD
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
     if (!db.ParkingSpots.Any()) {
         db.ParkingSpots.AddRange(
             new ParkingSpot { Name = "Bãi đỗ Tân Bình", Latitude = 10.7950, Longitude = 106.6600, IsAvailable = true },

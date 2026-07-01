@@ -4,10 +4,9 @@ import json
 import random
 from datetime import datetime, timezone
 
-BROKER = "localhost"
+BROKER = "broker.emqx.io" 
 PORT = 1883
-TOPIC = "logistics/fleet/truck_hcm_01" 
-
+TOPIC = "logistics/fleet/truck_hcm_01"
 # --- BIẾN TRẠNG THÁI ---
 ac_status = { "TRUCK_HCM_01": True, "TRUCK_HCM_02": True, "TRUCK_HCM_03": False }
 

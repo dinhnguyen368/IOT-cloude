@@ -295,3 +295,7 @@
 1782878851: Client 33d4a56e73f74ca0a2dd9e1294a22f97 disconnected.
 1782879402: mosquitto version 2.0.15 terminating
 1782879402: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782926268: mosquitto version 2.0.15 starting
+1782926268: Config loaded from /mosquitto/config/mosquitto.conf.
+1782926268: Opening ipv4 listen socket on port 1883.
+1782926268: mosquitto version 2.0.15 running

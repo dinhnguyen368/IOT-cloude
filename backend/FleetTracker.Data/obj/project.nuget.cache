@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Q8rzVD1WbcE=",
+  "dgSpecHash": "KD0GGKv12q0=",
   "success": true,
-  "projectFilePath": "D:\\codes\\dientoandamamy\\project\\IoT_Logistics_FleetTracking\\backend\\FleetTracker.Data\\FleetTracker.Data.csproj",
+  "projectFilePath": "D:\\codes\\AI\\IOT-cloude\\backend\\FleetTracker.Data\\FleetTracker.Data.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.data.sqlite.core\\8.0.11\\microsoft.data.sqlite.core.8.0.11.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.entityframeworkcore\\8.0.11\\microsoft.entityframeworkcore.8.0.11.nupkg.sha512",

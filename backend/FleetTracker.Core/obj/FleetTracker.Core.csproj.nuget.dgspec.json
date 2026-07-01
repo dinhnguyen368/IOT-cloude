@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\codes\\dientoandamamy\\project\\IoT_Logistics_FleetTracking\\backend\\FleetTracker.Core\\FleetTracker.Core.csproj": {}
+    "D:\\codes\\AI\\IOT-cloude\\backend\\FleetTracker.Core\\FleetTracker.Core.csproj": {}
   },
   "projects": {
-    "D:\\codes\\dientoandamamy\\project\\IoT_Logistics_FleetTracking\\backend\\FleetTracker.Core\\FleetTracker.Core.csproj": {
+    "D:\\codes\\AI\\IOT-cloude\\backend\\FleetTracker.Core\\FleetTracker.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\codes\\dientoandamamy\\project\\IoT_Logistics_FleetTracking\\backend\\FleetTracker.Core\\FleetTracker.Core.csproj",
+        "projectUniqueName": "D:\\codes\\AI\\IOT-cloude\\backend\\FleetTracker.Core\\FleetTracker.Core.csproj",
         "projectName": "FleetTracker.Core",
-        "projectPath": "D:\\codes\\dientoandamamy\\project\\IoT_Logistics_FleetTracking\\backend\\FleetTracker.Core\\FleetTracker.Core.csproj",
+        "projectPath": "D:\\codes\\AI\\IOT-cloude\\backend\\FleetTracker.Core\\FleetTracker.Core.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "D:\\codes\\dientoandamamy\\project\\IoT_Logistics_FleetTracking\\backend\\FleetTracker.Core\\obj\\",
+        "outputPath": "D:\\codes\\AI\\IOT-cloude\\backend\\FleetTracker.Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config"
