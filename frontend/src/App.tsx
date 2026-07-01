@@ -62,28 +62,33 @@ export default function App() {
     setAuth(null);
   };
 
-  // --- CÁC HÀM TƯƠNG TÁC API & MQTT ---
+  // ==============================================================
+  // VÁ LỖI 1: THÊM encodeURIComponent ĐỂ URL KHÔNG BỊ GÃY KHI CÓ EMOJI
+  // ==============================================================
   const handleUpdateStatus = async (status: string) => {
     if (!auth?.vehicleId) return;
     try {
-      await axios.post(`http://localhost:5230/api/tracking/status?vehicleId=${auth.vehicleId}&status=${status}`, {}, {
+      await axios.post(`http://localhost:5230/api/tracking/status?vehicleId=${encodeURIComponent(auth.vehicleId)}&status=${encodeURIComponent(status)}`, {}, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
+      alert(`✅ Đã thông báo trạng thái: ${status}`);
     } catch (e) { console.error("Lỗi cập nhật CSDL"); }
   };
 
   const handleSOS = async () => {
     if (!auth?.vehicleId) return;
     try {
-      await axios.post(`http://localhost:5230/api/tracking/sos?vehicleId=${auth.vehicleId}`, {}, {
+      await axios.post(`http://localhost:5230/api/tracking/sos?vehicleId=${encodeURIComponent(auth.vehicleId)}`, {}, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
+      alert("🚨 Đã gửi báo động SOS!");
     } catch (e) { alert("Lỗi khi gửi báo động SOS"); }
   };
 
   const handleDeviceControl = async (id: string, command: string) => {
+    if (!auth) return;
     try {
-      await axios.post(`http://localhost:5230/api/device/control?vehicleId=${id}&command=${command}`, {}, {
+      await axios.post(`http://localhost:5230/api/device/control?vehicleId=${encodeURIComponent(id)}&command=${encodeURIComponent(command)}`, {}, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
     } catch (e) { alert("Lỗi kết nối bộ điều khiển IoT"); }
@@ -91,7 +96,12 @@ export default function App() {
 
   useEffect(() => {
     if (!auth) return;
-    const headers = { Authorization: `Bearer ${auth.token}` };
+    
+    // ==============================================================
+    // VÁ LỖI 2: KHAI BÁO BIẾN currentToken ĐỂ FIX LỖI TYPESCRIPT "'auth' is possibly 'null'"
+    // ==============================================================
+    const currentToken = auth.token; 
+    const headers = { Authorization: `Bearer ${currentToken}` };
 
     const fetchData = async () => {
       try {
@@ -109,7 +119,8 @@ export default function App() {
     fetchData();
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5230/trackingHub", { accessTokenFactory: () => auth.token })
+      // Truyền currentToken vào thay vì auth.token để chiều lòng TypeScript
+      .withUrl("http://localhost:5230/trackingHub", { accessTokenFactory: () => currentToken })
       .withAutomaticReconnect()
       .build();
 
@@ -200,14 +211,25 @@ export default function App() {
   return (
     <div style={{ backgroundColor: '#f1f5f9', minHeight: '100vh', color: '#0f172a', fontFamily: 'system-ui, -apple-system, sans-serif', padding: '0 0 20px 0' }}>
       
-      {/* MÀN HÌNH BÁO ĐỘNG SOS TOÀN TRANG */}
+      {/* VÁ LỖI GIAO DIỆN SOS: HIỂN THỊ RESPONSIVE VÀ NÚT TẮT CẢNH BÁO CHO DRIVER */}
       {sosAlert && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(239, 68, 68, 0.95)', zIndex: 9999, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: 'white' }}>
-          <h1 style={{ fontSize: '100px', margin: 0, textShadow: '0 0 20px #000', animation: 'pulse 1s infinite' }}>🚨 SOS KHẨN CẤP 🚨</h1>
-          <h2 style={{ fontSize: '40px' }}>TÀI XẾ XE <span style={{ color: '#fef08a' }}>{sosAlert.vehicleId}</span> YÊU CẦU TRỢ GIÚP!</h2>
-          <p style={{ fontSize: '24px' }}>Thời gian báo động: {sosAlert.time}</p>
-          {auth.role === 'Admin' && (
-            <button onClick={() => setSosAlert(null)} style={{ padding: '20px 40px', background: 'white', color: '#b91c1c', border: 'none', borderRadius: '10px', fontSize: '24px', fontWeight: 'bold', cursor: 'pointer', marginTop: '30px', boxShadow: '0 10px 20px rgba(0,0,0,0.3)' }}>ĐÃ TIẾP NHẬN XỬ LÝ</button>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(239, 68, 68, 0.95)', zIndex: 9999, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: 'white', padding: '20px', textAlign: 'center', boxSizing: 'border-box' }}>
+          
+          <h1 style={{ fontSize: 'clamp(30px, 6vw, 80px)', margin: '0 0 20px 0', textShadow: '0 0 20px #000', lineHeight: '1.2', animation: 'pulse 1s infinite' }}>🚨 SOS KHẨN CẤP 🚨</h1>
+          
+          <h2 style={{ fontSize: 'clamp(20px, 4vw, 40px)', margin: '0 0 10px 0' }}>
+            TÀI XẾ XE <span style={{ color: '#fef08a' }}>{sosAlert.vehicleId}</span> YÊU CẦU TRỢ GIÚP!
+          </h2>
+          <p style={{ fontSize: 'clamp(16px, 2vw, 24px)', marginBottom: '40px' }}>Thời gian báo động: {sosAlert.time}</p>
+          
+          {auth.role === 'Admin' ? (
+            <button onClick={() => setSosAlert(null)} style={{ padding: '15px 30px', background: 'white', color: '#b91c1c', border: 'none', borderRadius: '10px', fontSize: 'clamp(16px, 2vw, 24px)', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 10px 20px rgba(0,0,0,0.3)' }}>
+              ĐÃ TIẾP NHẬN XỬ LÝ
+            </button>
+          ) : (
+            <button onClick={() => setSosAlert(null)} style={{ padding: '15px 30px', background: '#fef08a', color: '#b91c1c', border: 'none', borderRadius: '10px', fontSize: 'clamp(14px, 2vw, 20px)', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 10px 20px rgba(0,0,0,0.3)' }}>
+              ĐÃ GỬI TÍN HIỆU - QUAY LẠI MÀN HÌNH
+            </button>
           )}
         </div>
       )}
@@ -248,8 +270,8 @@ export default function App() {
                   <button 
                     key={s} 
                     onClick={() => {
-                      handleUpdateStatus(s); // 1. Lưu vào Database
-                      handleDeviceControl(auth.vehicleId!, `STATUS_${s}`); // 2. Bắn lệnh cho xe dừng/chạy
+                      handleUpdateStatus(s); 
+                      handleDeviceControl(auth.vehicleId!, `STATUS_${s}`); 
                     }} 
                     style={{ padding: '10px 15px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#f8fafc', cursor: 'pointer', fontWeight: 'bold', color: '#0f172a', transition: '0.2s' }}>
                     {s}
@@ -317,7 +339,9 @@ export default function App() {
                           <Popup>
                             <div style={{ color: '#0f172a' }}>
                               <strong style={{ fontSize: '15px', color: '#0ea5e9' }}>{id}</strong><br/><br/>
-                              🛠️ Trạng thái: <strong style={{ color: '#d97706' }}>{latest.status || 'Đang di chuyển'}</strong><br/>
+                              
+                              🛠️ Trạng thái: <strong style={{ color: '#d97706' }}>{latest.status || latest.Status || '🚚 Đang di chuyển'}</strong><br/>
+                              
                               🚚 Tốc độ: <strong style={{ color: latest.speed === 0 ? 'red' : 'green'}}>{latest.speed} km/h</strong><br/>
                               ❄️ Nhiệt độ: <strong>{latest.temperature}°C</strong>
                             </div>

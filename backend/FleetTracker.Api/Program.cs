@@ -157,7 +157,37 @@ app.MapPost("/api/device/control", async (string vehicleId, string command) => {
     await mqttClient.DisconnectAsync();
     return Results.Ok(new { Message = $"Đã truyền lệnh {command} xuống xe {vehicleId}" });
 }).RequireAuthorization();
+// -------------------------------------------------------
+// API Cập nhật trạng thái và bắn SignalR tức thời cho Web
+// -------------------------------------------------------
+app.MapPost("/api/tracking/status", async (string vehicleId, string status, AppDbContext db, IHubContext<TrackingHub> hubContext) => {
+    // 1. Lấy vị trí hiện tại của xe để xe đứng im trên bản đồ (không bị văng ra biển 0,0)
+    var lastLog = await db.TrackingLogs
+        .Where(t => t.VehicleId == vehicleId)
+        .OrderByDescending(t => t.Timestamp)
+        .FirstOrDefaultAsync();
 
+    // 2. Tạo bản ghi trạng thái mới
+    var log = new TrackingLog { 
+        VehicleId = vehicleId, 
+        Status = status, 
+        Timestamp = DateTime.UtcNow,
+        Latitude = lastLog?.Latitude ?? 10.7769, 
+        Longitude = lastLog?.Longitude ?? 106.7009,
+        Speed = 0, // Đã đổi trạng thái sang bốc hàng/nghỉ ngơi thì tốc độ ép về 0
+        Temperature = lastLog?.Temperature ?? 0,
+        Humidity = lastLog?.Humidity ?? 0
+    };
+    
+    // 3. Lưu vào Database
+    db.TrackingLogs.Add(log);
+    await db.SaveChangesAsync();
+
+    // 4. QUAN TRỌNG NHẤT: Bắn tín hiệu "ReceiveNewLog" cho Admin cập nhật ngay lập tức
+    await hubContext.Clients.All.SendAsync("ReceiveNewLog", log);
+
+    return Results.Ok(new { Message = "Đã cập nhật trạng thái thành công" });
+}).RequireAuthorization();
 // =======================================================
 // KHỞI TẠO DỮ LIỆU
 // =======================================================
