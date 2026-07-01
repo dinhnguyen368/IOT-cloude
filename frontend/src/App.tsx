@@ -18,7 +18,6 @@ const ParkingIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi
 const GEOFENCE_BOUNDS: [number, number][] = [[10.7700, 106.6950], [10.7800, 106.7050]];
 const isInsideGeofence = (lat: number, lng: number) => lat >= GEOFENCE_BOUNDS[0][0] && lat <= GEOFENCE_BOUNDS[1][0] && lng >= GEOFENCE_BOUNDS[0][1] && lng <= GEOFENCE_BOUNDS[1][1];
 
-// Bảng màu giao diện sáng (Light Theme Palette)
 const PIE_COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#ef4444'];
 
 export default function App() {
@@ -37,6 +36,9 @@ export default function App() {
   const [parkingSpots, setParkingSpots] = useState<any[]>([]);
   const [geofenceAlerts, setGeofenceAlerts] = useState<string[]>([]);
   const previousZoneStatus = useRef<Record<string, boolean>>({});
+
+  // State lưu cảnh báo SOS
+  const [sosAlert, setSosAlert] = useState<{ vehicleId: string, time: string } | null>(null);
 
   const [devices, setDevices] = useState([
     { id: 'GW-TRUCK-01', name: 'Bộ định vị Xe 01', status: 'Online', battery: 92, rssi: -65, lastSeen: 'Vừa xong' },
@@ -60,8 +62,31 @@ export default function App() {
     setAuth(null);
   };
 
-  const handleRebootDevice = (id: string) => {
-    alert(`📡 Đã gửi lệnh [REBOOT_COMMAND] qua MQTT xuống thiết bị ${id}. Thiết bị đang tái khởi động...`);
+  // --- CÁC HÀM TƯƠNG TÁC API & MQTT ---
+  const handleUpdateStatus = async (status: string) => {
+    if (!auth?.vehicleId) return;
+    try {
+      await axios.post(`http://localhost:5230/api/tracking/status?vehicleId=${auth.vehicleId}&status=${status}`, {}, {
+        headers: { Authorization: `Bearer ${auth.token}` }
+      });
+    } catch (e) { console.error("Lỗi cập nhật CSDL"); }
+  };
+
+  const handleSOS = async () => {
+    if (!auth?.vehicleId) return;
+    try {
+      await axios.post(`http://localhost:5230/api/tracking/sos?vehicleId=${auth.vehicleId}`, {}, {
+        headers: { Authorization: `Bearer ${auth.token}` }
+      });
+    } catch (e) { alert("Lỗi khi gửi báo động SOS"); }
+  };
+
+  const handleDeviceControl = async (id: string, command: string) => {
+    try {
+      await axios.post(`http://localhost:5230/api/device/control?vehicleId=${id}&command=${command}`, {}, {
+        headers: { Authorization: `Bearer ${auth.token}` }
+      });
+    } catch (e) { alert("Lỗi kết nối bộ điều khiển IoT"); }
   };
 
   useEffect(() => {
@@ -94,6 +119,11 @@ export default function App() {
       setHistory(prev => [newLog, ...prev]);
       setDevices(prev => prev.map(d => d.id === `GW-${newLog.vehicleId}` ? { ...d, status: 'Online', rssi: -50 - Math.floor(Math.random() * 20), lastSeen: 'Vừa xong' } : d));
     });
+
+    connection.on("ReceiveSOS", (data) => {
+      setSosAlert(data);
+    });
+
     if (auth.role === 'Admin') { connection.on("UpdateAnalytics", (newAnl) => setAnalytics(newAnl)); }
 
     return () => { connection.stop(); };
@@ -170,6 +200,18 @@ export default function App() {
   return (
     <div style={{ backgroundColor: '#f1f5f9', minHeight: '100vh', color: '#0f172a', fontFamily: 'system-ui, -apple-system, sans-serif', padding: '0 0 20px 0' }}>
       
+      {/* MÀN HÌNH BÁO ĐỘNG SOS TOÀN TRANG */}
+      {sosAlert && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(239, 68, 68, 0.95)', zIndex: 9999, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: 'white' }}>
+          <h1 style={{ fontSize: '100px', margin: 0, textShadow: '0 0 20px #000', animation: 'pulse 1s infinite' }}>🚨 SOS KHẨN CẤP 🚨</h1>
+          <h2 style={{ fontSize: '40px' }}>TÀI XẾ XE <span style={{ color: '#fef08a' }}>{sosAlert.vehicleId}</span> YÊU CẦU TRỢ GIÚP!</h2>
+          <p style={{ fontSize: '24px' }}>Thời gian báo động: {sosAlert.time}</p>
+          {auth.role === 'Admin' && (
+            <button onClick={() => setSosAlert(null)} style={{ padding: '20px 40px', background: 'white', color: '#b91c1c', border: 'none', borderRadius: '10px', fontSize: '24px', fontWeight: 'bold', cursor: 'pointer', marginTop: '30px', boxShadow: '0 10px 20px rgba(0,0,0,0.3)' }}>ĐÃ TIẾP NHẬN XỬ LÝ</button>
+          )}
+        </div>
+      )}
+
       {/* THANH TOPBAR */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'white', padding: '15px 30px', borderBottom: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
@@ -195,7 +237,29 @@ export default function App() {
 
       <div style={{ padding: '20px 30px' }}>
         
-        {/* BANNER CẢNH BÁO */}
+        {/* THANH ĐIỀU KHIỂN RIÊNG CHO TÀI XẾ (SOS + TRẠNG THÁI) */}
+        {auth.role === 'Driver' && (
+          <div style={{ background: 'white', padding: '15px 20px', borderRadius: '10px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
+             <button onClick={handleSOS} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '10px 25px', borderRadius: '8px', cursor: 'pointer', fontSize: '16px', fontWeight: 'bold', boxShadow: '0 4px 10px rgba(239, 68, 68, 0.3)', animation: 'pulse 2s infinite' }}>🚨 BÁO ĐỘNG SỰ CỐ TẬN NƠI (SOS)</button>
+             
+             <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <span style={{ fontWeight: 'bold', color: '#64748b', marginRight: '10px' }}>CẬP NHẬT TIẾN ĐỘ:</span>
+                {['📦 Đang bốc hàng', '🚚 Đang di chuyển', '🛑 Nghỉ ngơi / Đổ xăng', '✅ Giao thành công'].map(s => (
+                  <button 
+                    key={s} 
+                    onClick={() => {
+                      handleUpdateStatus(s); // 1. Lưu vào Database
+                      handleDeviceControl(auth.vehicleId!, `STATUS_${s}`); // 2. Bắn lệnh cho xe dừng/chạy
+                    }} 
+                    style={{ padding: '10px 15px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#f8fafc', cursor: 'pointer', fontWeight: 'bold', color: '#0f172a', transition: '0.2s' }}>
+                    {s}
+                  </button>
+                ))}
+             </div>
+          </div>
+        )}
+
+        {/* BANNER CẢNH BÁO ADMIN */}
         {auth.role === 'Admin' && (
           <>
             {overSpeedingTrucks.length > 0 && <div style={{ background: '#fee2e2', border: '1px solid #f87171', color: '#b91c1c', padding: '12px 20px', borderRadius: '8px', marginBottom: '15px', fontWeight: 'bold', boxShadow: '0 2px 4px rgba(248, 113, 113, 0.1)' }}>🚨 CẢNH BÁO: Phát hiện {overSpeedingTrucks.length} phương tiện vượt quá tốc độ 60km/h ({overSpeedingTrucks.map(t=>t.vehicleId).join(', ')})!</div>}
@@ -206,7 +270,6 @@ export default function App() {
         {/* ======================= TAB 1: MONITOR ======================= */}
         {activeTab === 'monitor' && (
           <>
-            {/* THẺ THỐNG KÊ */}
             {auth.role === 'Admin' ? (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '20px', marginBottom: '20px' }}>
                 {[
@@ -227,16 +290,14 @@ export default function App() {
               </div>
             ) : (
               <div style={{ background: '#ecfdf5', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #10b981', color: '#047857', fontWeight: 'bold' }}>
-                ℹ️ Chế độ Tài xế: Chỉ hiển thị dữ liệu và hành trình của phương tiện <strong>{auth.vehicleId}</strong>.
+                ℹ️ Chế độ Tài xế: Hệ thống radar tự động khóa vùng giám sát vào phương tiện <strong>{auth.vehicleId}</strong>.
               </div>
             )}
 
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px' }}>
-              
               {/* BẢN ĐỒ */}
               <div style={{ height: '520px', background: 'white', borderRadius: '10px', padding: '10px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
                 <MapContainer center={[10.79, 106.68]} zoom={13} style={{ height: '100%', borderRadius: '6px' }}>
-                  {/* Sử dụng CartoDB Light cho giao diện sáng */}
                   <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png" attribution="CartoDB Light" />
                   <Rectangle bounds={GEOFENCE_BOUNDS} pathOptions={{ color: '#8b5cf6', fillColor: '#8b5cf6', fillOpacity: 0.1 }}><Popup>Khu vực kiểm soát (Geofence)</Popup></Rectangle>
 
@@ -255,8 +316,9 @@ export default function App() {
                         <Marker position={[latest.latitude, latest.longitude]} icon={currentIcon}>
                           <Popup>
                             <div style={{ color: '#0f172a' }}>
-                              <strong style={{ fontSize: '14px', color: '#0ea5e9' }}>{id}</strong><br/><br/>
-                              🚚 Tốc độ: <strong>{latest.speed} km/h</strong><br/>
+                              <strong style={{ fontSize: '15px', color: '#0ea5e9' }}>{id}</strong><br/><br/>
+                              🛠️ Trạng thái: <strong style={{ color: '#d97706' }}>{latest.status || 'Đang di chuyển'}</strong><br/>
+                              🚚 Tốc độ: <strong style={{ color: latest.speed === 0 ? 'red' : 'green'}}>{latest.speed} km/h</strong><br/>
                               ❄️ Nhiệt độ: <strong>{latest.temperature}°C</strong>
                             </div>
                           </Popup>
@@ -288,7 +350,6 @@ export default function App() {
 
               {/* LOG GEOFENCE & BIỂU ĐỒ */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                
                 <div style={{ background: 'white', padding: '20px', borderRadius: '10px', border: '1px solid #e2e8f0', flexGrow: 1, overflowY: 'auto', height: '220px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
                   <h3 style={{ margin: '0 0 12px 0', color: '#8b5cf6', fontSize: '14px', borderBottom: '2px solid #f1f5f9', paddingBottom: '10px' }}>📍 NHẬT KÝ RA VÀO KHO</h3>
                   {geofenceAlerts.length === 0 ? (
@@ -321,8 +382,8 @@ export default function App() {
         {/* ======================= TAB 2: DEVICES ======================= */}
         {activeTab === 'devices' && (
           <div style={{ background: 'white', padding: '30px', borderRadius: '10px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
-            <h3 style={{ marginTop: 0, color: '#7e22ce' }}>🎛️ QUẢN LÝ THIẾT BỊ GATEWAY</h3>
-            <p style={{ color: '#64748b', fontSize: '14px', marginTop: '-10px', marginBottom: '25px' }}>Giám sát trạng thái phần cứng và điều khiển từ xa các vi mạch gắn trên xe.</p>
+            <h3 style={{ marginTop: 0, color: '#7e22ce' }}>🎛️ QUẢN LÝ THIẾT BỊ & PHẦN CỨNG IOT</h3>
+            <p style={{ color: '#64748b', fontSize: '14px', marginTop: '-10px', marginBottom: '25px' }}>Giám sát trạng thái phần cứng và điều khiển máy lạnh AC từ xa qua giao thức MQTT.</p>
             
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', textAlign: 'left' }}>
               <thead>
@@ -332,8 +393,7 @@ export default function App() {
                   <th>TRẠNG THÁI</th>
                   <th>PIN</th>
                   <th>SÓNG (RSSI)</th>
-                  <th>CẬP NHẬT CUỐI</th>
-                  <th>HÀNH ĐỘNG</th>
+                  <th>HÀNH ĐỘNG HẠ TẦNG</th>
                 </tr>
               </thead>
               <tbody>
@@ -346,9 +406,11 @@ export default function App() {
                     </td>
                     <td style={{ color: '#334155' }}>{dev.status === 'Online' ? `${dev.battery}%` : 'N/A'}</td>
                     <td style={{ color: dev.rssi > -70 ? '#10b981' : '#f59e0b', fontWeight: 'bold' }}>{dev.rssi} dBm</td>
-                    <td style={{ color: '#64748b' }}>{dev.lastSeen}</td>
                     <td>
-                      <button onClick={() => handleRebootDevice(dev.id)} style={{ background: 'white', border: '1px solid #ef4444', color: '#ef4444', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold', transition: '0.2s' }}>Khởi động lại</button>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button onClick={() => handleDeviceControl(dev.id.replace('GW-', ''), 'AC_ON')} style={{ background: '#0ea5e9', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>❄️ BẬT AC</button>
+                        <button onClick={() => handleDeviceControl(dev.id.replace('GW-', ''), 'AC_OFF')} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>🔥 TẮT AC</button>
+                      </div>
                     </td>
                   </tr>
                 ))}

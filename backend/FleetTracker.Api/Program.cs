@@ -6,6 +6,7 @@ using FleetTracker.Api.Services;
 using FleetTracker.Core;
 using FleetTracker.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MQTTnet;
@@ -43,14 +44,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             OnMessageReceived = context =>
             {
-                // SignalR gửi token qua query string tên là "access_token"
                 var accessToken = context.Request.Query["access_token"];
-
-                // Nếu request đang gọi vào đường dẫn của Hub
                 var path = context.HttpContext.Request.Path;
                 if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/trackingHub"))
                 {
-                    // Lấy token đó đưa cho hệ thống kiểm tra
                     context.Token = accessToken;
                 }
                 return Task.CompletedTask;
@@ -104,7 +101,7 @@ app.MapPost("/api/auth/login", async (LoginRequest req, AppDbContext db) =>
 });
 
 // =======================================================
-// CÁC API CÓ BẢO MẬT
+// CÁC API CÓ BẢO MẬT (CODE CŨ GIỮ NGUYÊN)
 // =======================================================
 app.MapGet("/api/tracking/history", async (AppDbContext db) => {
     var history = await db.TrackingLogs.OrderByDescending(t => t.Timestamp).Take(100).ToListAsync();
@@ -134,6 +131,34 @@ app.MapPost("/api/parking/book", async (string vehicleId, int spotId, AppDbConte
 }).RequireAuthorization(policy => policy.RequireRole("Driver"));
 
 // =======================================================
+// API MỚI: SOS VÀ ĐIỀU KHIỂN THIẾT BỊ IoT 
+// =======================================================
+
+// API Gửi tín hiệu SOS khẩn cấp (Push SignalR)
+app.MapPost("/api/tracking/sos", async (string vehicleId, IHubContext<TrackingHub> hubContext) => {
+    var time = DateTime.Now.ToString("HH:mm:ss");
+    await hubContext.Clients.All.SendAsync("ReceiveSOS", new { VehicleId = vehicleId, Time = time });
+    return Results.Ok(new { Message = "Đã phát tín hiệu SOS!" });
+}).RequireAuthorization(policy => policy.RequireRole("Driver"));
+
+// API Điều khiển phần cứng và cập nhật trạng thái (Bắn qua MQTT)
+app.MapPost("/api/device/control", async (string vehicleId, string command) => {
+    var factory = new MqttFactory();
+    using var mqttClient = factory.CreateMqttClient();
+    var options = new MqttClientOptionsBuilder().WithTcpServer("localhost", 1883).Build();
+    
+    await mqttClient.ConnectAsync(options);
+    var message = new MqttApplicationMessageBuilder()
+        .WithTopic("logistics/control")
+        .WithPayload($"{vehicleId}|{command}") 
+        .Build();
+    
+    await mqttClient.PublishAsync(message);
+    await mqttClient.DisconnectAsync();
+    return Results.Ok(new { Message = $"Đã truyền lệnh {command} xuống xe {vehicleId}" });
+}).RequireAuthorization();
+
+// =======================================================
 // KHỞI TẠO DỮ LIỆU
 // =======================================================
 using (var scope = app.Services.CreateScope())
@@ -160,5 +185,4 @@ using (var scope = app.Services.CreateScope())
 
 app.Run();
 
-// Class bắt buộc để dưới cùng
 public class LoginRequest { public string Username { get; set; } = ""; public string Password { get; set; } = ""; }

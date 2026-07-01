@@ -95,3 +95,151 @@
 1782131900: Client DotNet_Backend_87fe56d4-6707-42f2-89ad-3ba5c853c3d6 disconnected.
 1782131944: mosquitto version 2.0.15 terminating
 1782131944: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782813824: mosquitto version 2.0.15 starting
+1782813824: Config loaded from /mosquitto/config/mosquitto.conf.
+1782813824: Opening ipv4 listen socket on port 1883.
+1782813824: mosquitto version 2.0.15 running
+1782813902: New connection from 172.18.0.1:42614 on port 1883.
+1782813902: New client connected from 172.18.0.1:42614 as DotNet_Backend_a3245ce7-858d-4273-acbd-c1c0ae21f04d (p2, c1, k15).
+1782814718: Client DotNet_Backend_a3245ce7-858d-4273-acbd-c1c0ae21f04d disconnected.
+1782815059: New connection from 172.18.0.1:45864 on port 1883.
+1782815059: New client connected from 172.18.0.1:45864 as DotNet_Backend_8f7834c5-6702-4ba2-9405-9685be0da98c (p2, c1, k15).
+1782815078: Client DotNet_Backend_8f7834c5-6702-4ba2-9405-9685be0da98c disconnected.
+1782815083: New connection from 172.18.0.1:57708 on port 1883.
+1782815083: New client connected from 172.18.0.1:57708 as DotNet_Backend_723636f2-25e9-4c8b-bf07-c846bc85d114 (p2, c1, k15).
+1782815624: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782815695: New connection from 172.18.0.1:56998 on port 1883.
+1782815695: New client connected from 172.18.0.1:56998 as Multi_Fleet_Simulator (p2, c1, k60).
+1782815968: Client Multi_Fleet_Simulator disconnected.
+1782817353: New connection from 172.18.0.1:34868 on port 1883.
+1782817353: New client connected from 172.18.0.1:34868 as auto-F934294D-56E8-F8A4-3FD2-E43255EA2BFE (p2, c1, k60).
+1782817425: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782817544: Client DotNet_Backend_723636f2-25e9-4c8b-bf07-c846bc85d114 disconnected.
+1782817555: New connection from 172.18.0.1:57940 on port 1883.
+1782817555: New client connected from 172.18.0.1:57940 as DotNet_Backend_d3f8cafc-a73d-4ebb-94ea-c79716af5963 (p2, c1, k15).
+1782817596: New connection from 172.18.0.1:48418 on port 1883.
+1782817596: New client connected from 172.18.0.1:48418 as a4f7e310ca1b4114b06df79f3be7a8bb (p2, c1, k15).
+1782817596: Client a4f7e310ca1b4114b06df79f3be7a8bb disconnected.
+1782817679: New connection from 172.18.0.1:42234 on port 1883.
+1782817679: New client connected from 172.18.0.1:42234 as 153c1ce25f1348b68d83f21966fe0141 (p2, c1, k15).
+1782817679: Client 153c1ce25f1348b68d83f21966fe0141 disconnected.
+1782817687: New connection from 172.18.0.1:42494 on port 1883.
+1782817687: New client connected from 172.18.0.1:42494 as d8d5b4830da8457dbfdcd1e9a47ad3ef (p2, c1, k15).
+1782817687: Client d8d5b4830da8457dbfdcd1e9a47ad3ef disconnected.
+1782817728: Client auto-F934294D-56E8-F8A4-3FD2-E43255EA2BFE closed its connection.
+1782817731: New connection from 172.18.0.1:51892 on port 1883.
+1782817731: New client connected from 172.18.0.1:51892 as auto-3E72BF68-E33D-7AD9-DC1B-E9474D947E9D (p2, c1, k60).
+1782817733: Client auto-3E72BF68-E33D-7AD9-DC1B-E9474D947E9D closed its connection.
+1782819225: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782820466: New connection from 172.18.0.1:47646 on port 1883.
+1782820466: New client connected from 172.18.0.1:47646 as auto-7DC816B8-FE30-E197-18EA-2341F8BACD47 (p2, c1, k60).
+1782820501: Client auto-7DC816B8-FE30-E197-18EA-2341F8BACD47 closed its connection.
+1782820506: Client DotNet_Backend_d3f8cafc-a73d-4ebb-94ea-c79716af5963 closed its connection.
+1782820508: mosquitto version 2.0.15 terminating
+1782820508: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782876967: mosquitto version 2.0.15 starting
+1782876967: Config loaded from /mosquitto/config/mosquitto.conf.
+1782876967: Opening ipv4 listen socket on port 1883.
+1782876967: mosquitto version 2.0.15 running
+1782877108: New connection from 172.18.0.1:36062 on port 1883.
+1782877108: New client connected from 172.18.0.1:36062 as DotNet_Backend_d529b4d7-dd52-4b75-b607-c87cc920aa1b (p2, c1, k15).
+1782877119: New connection from 172.18.0.1:39774 on port 1883.
+1782877119: New client connected from 172.18.0.1:39774 as Multi_Fleet_Simulator (p2, c1, k60).
+1782877157: New connection from 172.18.0.1:47344 on port 1883.
+1782877157: New client connected from 172.18.0.1:47344 as 74c4873f2acd491b9d804cc9374f134a (p2, c1, k15).
+1782877158: Client 74c4873f2acd491b9d804cc9374f134a disconnected.
+1782877173: New connection from 172.18.0.1:35270 on port 1883.
+1782877173: New client connected from 172.18.0.1:35270 as e243827317004be88ca408a451377c3d (p2, c1, k15).
+1782877173: Client e243827317004be88ca408a451377c3d disconnected.
+1782877174: New connection from 172.18.0.1:35286 on port 1883.
+1782877174: New client connected from 172.18.0.1:35286 as ecaa000565174856938d43dda81cc2ac (p2, c1, k15).
+1782877174: Client ecaa000565174856938d43dda81cc2ac disconnected.
+1782877174: New connection from 172.18.0.1:35292 on port 1883.
+1782877174: New client connected from 172.18.0.1:35292 as 5b8ed036099e4ce7b5327ef3bcf948a2 (p2, c1, k15).
+1782877174: Client 5b8ed036099e4ce7b5327ef3bcf948a2 disconnected.
+1782877174: New connection from 172.18.0.1:35304 on port 1883.
+1782877174: New client connected from 172.18.0.1:35304 as dfcd4c5c400a4f3d863abec6a456958b (p2, c1, k15).
+1782877174: Client dfcd4c5c400a4f3d863abec6a456958b disconnected.
+1782877175: New connection from 172.18.0.1:35306 on port 1883.
+1782877175: New client connected from 172.18.0.1:35306 as 3992f027b50d4de181cad6dcfc40fbf5 (p2, c1, k15).
+1782877175: Client 3992f027b50d4de181cad6dcfc40fbf5 disconnected.
+1782877175: New connection from 172.18.0.1:35320 on port 1883.
+1782877175: New client connected from 172.18.0.1:35320 as 7c6136115e6f4fd89eee60259bd49ac2 (p2, c1, k15).
+1782877175: Client 7c6136115e6f4fd89eee60259bd49ac2 disconnected.
+1782877176: New connection from 172.18.0.1:35324 on port 1883.
+1782877176: New client connected from 172.18.0.1:35324 as 008b64b5a2a1449bad59b48aa8398cf5 (p2, c1, k15).
+1782877176: Client 008b64b5a2a1449bad59b48aa8398cf5 disconnected.
+1782877176: New connection from 172.18.0.1:35330 on port 1883.
+1782877176: New client connected from 172.18.0.1:35330 as 5a125fea78a94e149caf3d1d20fb1c77 (p2, c1, k15).
+1782877176: Client 5a125fea78a94e149caf3d1d20fb1c77 disconnected.
+1782877177: New connection from 172.18.0.1:35332 on port 1883.
+1782877177: New client connected from 172.18.0.1:35332 as c2496c2557e94dbc9ef0fae19c1d0ef6 (p2, c1, k15).
+1782877177: Client c2496c2557e94dbc9ef0fae19c1d0ef6 disconnected.
+1782877371: Client Multi_Fleet_Simulator disconnected.
+1782877380: New connection from 172.18.0.1:45408 on port 1883.
+1782877380: New client connected from 172.18.0.1:45408 as Multi_Fleet_Simulator (p2, c1, k60).
+1782877457: New connection from 172.18.0.1:34198 on port 1883.
+1782877457: New client connected from 172.18.0.1:34198 as 0c9ff10a8483426a936b7581b87be768 (p2, c1, k15).
+1782877457: Client 0c9ff10a8483426a936b7581b87be768 disconnected.
+1782877460: New connection from 172.18.0.1:34212 on port 1883.
+1782877460: New client connected from 172.18.0.1:34212 as 37930424606840acb95c54b85b3e6606 (p2, c1, k15).
+1782877460: Client 37930424606840acb95c54b85b3e6606 disconnected.
+1782877460: New connection from 172.18.0.1:34226 on port 1883.
+1782877460: New client connected from 172.18.0.1:34226 as c29c12abeefe4e45b6ab5a5bf6207a78 (p2, c1, k15).
+1782877460: Client c29c12abeefe4e45b6ab5a5bf6207a78 disconnected.
+1782877460: New connection from 172.18.0.1:34230 on port 1883.
+1782877460: New client connected from 172.18.0.1:34230 as f4f7b8e822ba4e80bbd0f10aa19957b5 (p2, c1, k15).
+1782877460: Client f4f7b8e822ba4e80bbd0f10aa19957b5 disconnected.
+1782877460: New connection from 172.18.0.1:34238 on port 1883.
+1782877460: New client connected from 172.18.0.1:34238 as 43eee198b5f642afb3683e943f80ccac (p2, c1, k15).
+1782877460: Client 43eee198b5f642afb3683e943f80ccac disconnected.
+1782877461: New connection from 172.18.0.1:34244 on port 1883.
+1782877461: New client connected from 172.18.0.1:34244 as c5450414d20547229beaa4258bf6871e (p2, c1, k15).
+1782877461: Client c5450414d20547229beaa4258bf6871e disconnected.
+1782877461: New connection from 172.18.0.1:34258 on port 1883.
+1782877461: New client connected from 172.18.0.1:34258 as 025e10a06365453da04403d58bfcefcd (p2, c1, k15).
+1782877461: Client 025e10a06365453da04403d58bfcefcd disconnected.
+1782877462: New connection from 172.18.0.1:34272 on port 1883.
+1782877462: New client connected from 172.18.0.1:34272 as 6454e8d7f56a40fd9e2d02514aeeba37 (p2, c1, k15).
+1782877462: Client 6454e8d7f56a40fd9e2d02514aeeba37 disconnected.
+1782877462: New connection from 172.18.0.1:38596 on port 1883.
+1782877462: New client connected from 172.18.0.1:38596 as f3e07d29600246f88b9a636258787c98 (p2, c1, k15).
+1782877462: Client f3e07d29600246f88b9a636258787c98 disconnected.
+1782877765: New connection from 172.18.0.1:43154 on port 1883.
+1782877765: New client connected from 172.18.0.1:43154 as dbc0ac0f489945248f3f3c5d5e13a8e8 (p2, c1, k15).
+1782877765: Client dbc0ac0f489945248f3f3c5d5e13a8e8 disconnected.
+1782877765: New connection from 172.18.0.1:43168 on port 1883.
+1782877765: New client connected from 172.18.0.1:43168 as 51c0b75b26e14f20b751983878a342f2 (p2, c1, k15).
+1782877765: Client 51c0b75b26e14f20b751983878a342f2 disconnected.
+1782877766: New connection from 172.18.0.1:43170 on port 1883.
+1782877766: New client connected from 172.18.0.1:43170 as 4a40aabe8e024253976a35154ca620fd (p2, c1, k15).
+1782877766: Client 4a40aabe8e024253976a35154ca620fd disconnected.
+1782877787: Client Multi_Fleet_Simulator disconnected.
+1782877830: New connection from 172.18.0.1:37664 on port 1883.
+1782877830: New client connected from 172.18.0.1:37664 as Multi_Fleet_Simulator (p2, c1, k60).
+1782877846: New connection from 172.18.0.1:36038 on port 1883.
+1782877846: New client connected from 172.18.0.1:36038 as 0c1e736d91a447e9883136b4c9e805cf (p2, c1, k15).
+1782877846: Client 0c1e736d91a447e9883136b4c9e805cf disconnected.
+1782877862: New connection from 172.18.0.1:46026 on port 1883.
+1782877862: New client connected from 172.18.0.1:46026 as 7718dcf05b184fbdb61a8c081ecdd3b3 (p2, c1, k15).
+1782877862: Client 7718dcf05b184fbdb61a8c081ecdd3b3 disconnected.
+1782878169: New connection from 172.18.0.1:47172 on port 1883.
+1782878169: New client connected from 172.18.0.1:47172 as 2872fe8e3248441e8d02f2be489ba808 (p2, c1, k15).
+1782878169: Client 2872fe8e3248441e8d02f2be489ba808 disconnected.
+1782878331: Client Multi_Fleet_Simulator disconnected.
+1782878345: Client DotNet_Backend_d529b4d7-dd52-4b75-b607-c87cc920aa1b closed its connection.
+1782878397: New connection from 172.18.0.1:53070 on port 1883.
+1782878397: New client connected from 172.18.0.1:53070 as DotNet_Backend_fc425b23-0175-4a8d-8444-3715d96e3d49 (p2, c1, k15).
+1782878411: New connection from 172.18.0.1:36240 on port 1883.
+1782878411: New client connected from 172.18.0.1:36240 as Multi_Fleet_Simulator (p2, c1, k60).
+1782878527: Client DotNet_Backend_fc425b23-0175-4a8d-8444-3715d96e3d49 disconnected.
+1782878546: mosquitto version 2.0.15 terminating
+1782878546: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782878548: mosquitto version 2.0.15 starting
+1782878548: Config loaded from /mosquitto/config/mosquitto.conf.
+1782878548: Opening ipv4 listen socket on port 1883.
+1782878548: mosquitto version 2.0.15 running
+1782878549: New connection from 172.18.0.1:37692 on port 1883.
+1782878549: New client connected from 172.18.0.1:37692 as Multi_Fleet_Simulator (p2, c1, k60).
+1782878552: mosquitto version 2.0.15 terminating
+1782878552: Saving in-memory database to /mosquitto/data//mosquitto.db.
