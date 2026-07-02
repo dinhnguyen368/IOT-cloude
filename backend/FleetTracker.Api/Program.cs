@@ -58,7 +58,8 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowReactApp",
-        policy => policy.WithOrigins("http://localhost:5173") 
+        policy => policy
+              .SetIsOriginAllowed(origin => true) // 🔥 Dòng này mở khóa cho phép mọi tên miền (bao gồm cả Vercel)
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials()); 
