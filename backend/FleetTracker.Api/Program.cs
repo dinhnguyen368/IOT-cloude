@@ -57,17 +57,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             }
         };
     });
-builder.Services.AddAuthorization();
-
-builder.Services.AddCors(options => {
-    options.AddPolicy("AllowReactApp",
-        policy => policy
-              .SetIsOriginAllowed(origin => true) // 🔥 Dòng này mở khóa cho phép mọi tên miền (bao gồm cả Vercel)
-              .AllowAnyMethod()
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:5173", 
+                "https://iot-cloude-git-main-nguyen12.vercel.app" // THÊM LINK VERCEL CỦA BẠN VÀO ĐÂY
+              )
               .AllowAnyHeader()
-              .AllowCredentials()); 
+              .AllowAnyMethod()
+              .AllowCredentials(); // Bắt buộc phải có dòng này thì SignalR (Real-time) mới chạy
+    });
 });
-
 var app = builder.Build();
 
 app.UseCors("AllowReactApp");

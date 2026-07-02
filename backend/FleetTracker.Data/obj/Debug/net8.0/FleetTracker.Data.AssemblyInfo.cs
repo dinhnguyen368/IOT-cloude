@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FleetTracker.Data")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5131a4512befac597df9bd44fe58c4f5168aa506")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d096550a910dbe2f2ce4b81401d76ff3ebd26c3c")]
 [assembly: System.Reflection.AssemblyProductAttribute("FleetTracker.Data")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FleetTracker.Data")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
