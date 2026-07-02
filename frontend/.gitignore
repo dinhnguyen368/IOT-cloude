@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Bỏ qua các file database và log
+docker/mosquitto/data/*.db
+docker/mosquitto/log/*.log

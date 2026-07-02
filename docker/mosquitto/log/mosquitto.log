@@ -299,3 +299,50 @@
 1782926268: Config loaded from /mosquitto/config/mosquitto.conf.
 1782926268: Opening ipv4 listen socket on port 1883.
 1782926268: mosquitto version 2.0.15 running
+1782926313: New connection from 172.18.0.1:52664 on port 1883.
+1782926313: New client connected from 172.18.0.1:52664 as DotNet_Backend_6c00711b-d5c7-430f-addc-d42567c7f85b (p2, c1, k15).
+1782926388: New connection from 172.18.0.1:58790 on port 1883.
+1782926388: New client connected from 172.18.0.1:58790 as Multi_Fleet_Simulator (p2, c1, k60).
+1782926416: New connection from 172.18.0.1:49958 on port 1883.
+1782926416: New client connected from 172.18.0.1:49958 as c0a0213df3eb4a66a5cb30e57f559726 (p2, c1, k15).
+1782926416: Client c0a0213df3eb4a66a5cb30e57f559726 disconnected.
+1782926863: New connection from 172.18.0.1:37458 on port 1883.
+1782926863: New client connected from 172.18.0.1:37458 as 69e13075c9844552b1101ee6011183a2 (p2, c1, k15).
+1782926863: Client 69e13075c9844552b1101ee6011183a2 disconnected.
+1782926901: New connection from 172.18.0.1:41498 on port 1883.
+1782926901: New client connected from 172.18.0.1:41498 as a4b6974a9b80470d9d4e0222e52f9fc8 (p2, c1, k15).
+1782926901: Client a4b6974a9b80470d9d4e0222e52f9fc8 disconnected.
+1782928068: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782929869: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782931669: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782932121: Client DotNet_Backend_6c00711b-d5c7-430f-addc-d42567c7f85b disconnected.
+1782932402: New connection from 172.18.0.1:58952 on port 1883.
+1782932402: New client connected from 172.18.0.1:58952 as DotNet_Backend_940df921-f680-4ef2-9909-5456e2607c3d (p2, c1, k15).
+1782932410: Client DotNet_Backend_940df921-f680-4ef2-9909-5456e2607c3d disconnected.
+1782932825: New connection from 172.18.0.1:56308 on port 1883.
+1782932825: New client connected from 172.18.0.1:56308 as DotNet_Backend_e2467610-41f5-426b-be81-c7e99cfc6dc1 (p2, c1, k15).
+1782932833: Client DotNet_Backend_e2467610-41f5-426b-be81-c7e99cfc6dc1 disconnected.
+1782933059: New connection from 172.18.0.1:60038 on port 1883.
+1782933059: New client connected from 172.18.0.1:60038 as DotNet_Backend_48431bc3-180b-432f-a5e3-60d89d3d5a83 (p2, c1, k15).
+1782933066: Client DotNet_Backend_48431bc3-180b-432f-a5e3-60d89d3d5a83 disconnected.
+1782933470: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782933722: New connection from 172.18.0.1:42792 on port 1883.
+1782933722: New client connected from 172.18.0.1:42792 as DotNet_Backend_ed1db572-e3b9-413e-9b25-eb839da87a13 (p2, c1, k15).
+1782934640: Client Multi_Fleet_Simulator disconnected.
+1782934724: New connection from 172.18.0.1:50778 on port 1883.
+1782934724: New client connected from 172.18.0.1:50778 as 92aa1f671bc34c9ea7db82e905345d47 (p2, c1, k15).
+1782934724: Client 92aa1f671bc34c9ea7db82e905345d47 disconnected.
+1782934726: New connection from 172.18.0.1:50780 on port 1883.
+1782934726: New client connected from 172.18.0.1:50780 as 2a1a4ecef0c64e0d9f0b1db06b28a0e9 (p2, c1, k15).
+1782934726: Client 2a1a4ecef0c64e0d9f0b1db06b28a0e9 disconnected.
+1782934742: New connection from 172.18.0.1:54912 on port 1883.
+1782934742: New client connected from 172.18.0.1:54912 as 9775d24318bf47a8a16498a9d7f54530 (p2, c1, k15).
+1782934742: Client 9775d24318bf47a8a16498a9d7f54530 disconnected.
+1782935270: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782936070: New connection from 172.18.0.1:59726 on port 1883.
+1782936070: New client connected from 172.18.0.1:59726 as 57ba5f6438ab488bb7748bb0986ac1ba (p2, c1, k15).
+1782936070: Client 57ba5f6438ab488bb7748bb0986ac1ba disconnected.
+1782936080: New connection from 172.18.0.1:46938 on port 1883.
+1782936080: New client connected from 172.18.0.1:46938 as cb8feab02c3b406484847389ce52ac1f (p2, c1, k15).
+1782936080: Client cb8feab02c3b406484847389ce52ac1f disconnected.
+1782937072: Saving in-memory database to /mosquitto/data//mosquitto.db.

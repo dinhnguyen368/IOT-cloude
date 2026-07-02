@@ -9,7 +9,7 @@ import L from 'leaflet';
 // --- CẤU HÌNH ICON BẢN ĐỒ ---
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-const BASE_URL = "https://annex-agreement-nutshell.ngrok-free.dev";
+const BASE_URL = "https://jjrhb-1-53-239-68.free.pinggy.net";
 const DefaultIcon = L.icon({ iconUrl: icon, shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
 const AlertSpeedIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
 const AlertTempIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png', shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
@@ -106,12 +106,12 @@ export default function App() {
 
     const fetchData = async () => {
       try {
-        const histRes = await axios.get('http://localhost:5230/api/tracking/history', { headers });
+        const histRes = await axios.get('https://jjrhb-1-53-239-68.free.pinggy.net/api/tracking/history', { headers });
         setHistory(histRes.data);
-        const parkRes = await axios.get('http://localhost:5230/api/parking', { headers });
+        const parkRes = await axios.get('https://jjrhb-1-53-239-68.free.pinggy.net/api/parking', { headers });
         setParkingSpots(parkRes.data);
         if (auth.role === 'Admin') {
-          const anlRes = await axios.get('http://localhost:5230/api/tracking/analytics', { headers });
+          const anlRes = await axios.get('https://jjrhb-1-53-239-68.free.pinggy.net/api/tracking/analytics', { headers });
           setAnalytics(anlRes.data);
         }
       } catch (e: any) { if (e.response?.status === 401) handleLogout(); }
@@ -171,7 +171,7 @@ export default function App() {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
       alert(`✅ Đã đặt thành công bãi đỗ số ${spotId}!`);
-      const parkRes = await axios.get('http://localhost:5230/api/parking', { headers: { Authorization: `Bearer ${auth.token}` } });
+      const parkRes = await axios.get('https://jjrhb-1-53-239-68.free.pinggy.net/api/parking', { headers: { Authorization: `Bearer ${auth.token}` } });
       setParkingSpots(parkRes.data);
     } catch (error: any) { alert("Lỗi gửi lệnh."); }
   };
