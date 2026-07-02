@@ -63,11 +63,12 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                 "http://localhost:5173", 
-                "https://iot-cloude-git-main-nguyen12.vercel.app" // THÊM LINK VERCEL CỦA BẠN VÀO ĐÂY
+                "https://iot-cloude-git-main-nguyen12.vercel.app", // Link cũ (cứ để lại không sao)
+                "https://iot-cloude.vercel.app" // <-- BẠN CHỈ CẦN THÊM DÒNG NÀY VÀO LÀ XONG
               )
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials(); // Bắt buộc phải có dòng này thì SignalR (Real-time) mới chạy
+              .AllowCredentials(); 
     });
 });
 var app = builder.Build();
