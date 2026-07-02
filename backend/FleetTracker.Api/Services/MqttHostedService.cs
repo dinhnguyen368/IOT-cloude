@@ -33,7 +33,7 @@ public class MqttHostedService : IHostedService
 
         _mqttOptions = new MqttClientOptionsBuilder()
             .WithClientId("DotNet_Backend_" + Guid.NewGuid().ToString())
-            .WithTcpServer(Broker, 1883)
+            .WithTcpServer("broker.emqx.io", 1883)
             .Build();
 
         _mqttClient.ApplicationMessageReceivedAsync += async e =>

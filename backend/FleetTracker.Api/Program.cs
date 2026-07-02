@@ -145,8 +145,7 @@ app.MapPost("/api/tracking/sos", async (string vehicleId, IHubContext<TrackingHu
 app.MapPost("/api/device/control", async (string vehicleId, string command) => {
     var factory = new MqttFactory();
     using var mqttClient = factory.CreateMqttClient();
-    var options = new MqttClientOptionsBuilder().WithTcpServer("localhost", 1883).Build();
-    
+    var options = new MqttClientOptionsBuilder().WithTcpServer("broker.emqx.io", 1883).Build();
     await mqttClient.ConnectAsync(options);
     var message = new MqttApplicationMessageBuilder()
         .WithTopic("logistics/control")

@@ -346,3 +346,12 @@
 1782936080: New client connected from 172.18.0.1:46938 as cb8feab02c3b406484847389ce52ac1f (p2, c1, k15).
 1782936080: Client cb8feab02c3b406484847389ce52ac1f disconnected.
 1782937072: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1782949287: mosquitto version 2.0.15 starting
+1782949287: Config loaded from /mosquitto/config/mosquitto.conf.
+1782949287: Opening ipv4 listen socket on port 1883.
+1782949287: mosquitto version 2.0.15 running
+1782949455: New connection from 172.18.0.1:51588 on port 1883.
+1782949455: New client connected from 172.18.0.1:51588 as DotNet_Backend_c399ba3d-852e-499d-8e84-d5ec32dcea88 (p2, c1, k15).
+1782950425: Client DotNet_Backend_c399ba3d-852e-499d-8e84-d5ec32dcea88 disconnected.
+1782950451: New connection from 172.18.0.1:42140 on port 1883.
+1782950451: New client connected from 172.18.0.1:42140 as DotNet_Backend_49f7f896-c9b6-4b8e-b437-c3edef3e2c29 (p2, c1, k15).
