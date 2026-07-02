@@ -121,7 +121,7 @@ export default function App() {
 
     const connection = new signalR.HubConnectionBuilder()
       // Truyền currentToken vào thay vì auth.token để chiều lòng TypeScript
-      .withUrl("http://localhost:5230/trackingHub", { accessTokenFactory: () => currentToken })
+      .withUrl("https://iot-cloude.onrender.com/trackingHub", { accessTokenFactory: () => currentToken })
       .withAutomaticReconnect()
       .build();
 
