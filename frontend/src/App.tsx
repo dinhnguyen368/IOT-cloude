@@ -50,7 +50,7 @@ export default function App() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5230/api/auth/login', { username, password });
+      const res = await axios.post('https://iot-cloude.onrender.com/api/auth/login', { username, password });
       const userAuth = { token: res.data.token, role: res.data.role, username: res.data.username, vehicleId: res.data.vehicleId };
       localStorage.setItem('fleet_auth', JSON.stringify(userAuth));
       setAuth(userAuth);
@@ -69,7 +69,7 @@ export default function App() {
   const handleUpdateStatus = async (status: string) => {
     if (!auth?.vehicleId) return;
     try {
-      await axios.post(`http://localhost:5230/api/tracking/status?vehicleId=${encodeURIComponent(auth.vehicleId)}&status=${encodeURIComponent(status)}`, {}, {
+      await axios.post(`https://iot-cloude.onrender.com/api/tracking/status?vehicleId=${encodeURIComponent(auth.vehicleId)}&status=${encodeURIComponent(status)}`, {}, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
       alert(`✅ Đã thông báo trạng thái: ${status}`);
@@ -79,7 +79,7 @@ export default function App() {
   const handleSOS = async () => {
     if (!auth?.vehicleId) return;
     try {
-      await axios.post(`http://localhost:5230/api/tracking/sos?vehicleId=${encodeURIComponent(auth.vehicleId)}`, {}, {
+      await axios.post(`https://iot-cloude.onrender.com/api/tracking/sos?vehicleId=${encodeURIComponent(auth.vehicleId)}`, {}, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
       alert("🚨 Đã gửi báo động SOS!");
@@ -89,7 +89,7 @@ export default function App() {
   const handleDeviceControl = async (id: string, command: string) => {
     if (!auth) return;
     try {
-      await axios.post(`http://localhost:5230/api/device/control?vehicleId=${encodeURIComponent(id)}&command=${encodeURIComponent(command)}`, {}, {
+      await axios.post(`https://iot-cloude.onrender.com/api/device/control?vehicleId=${encodeURIComponent(id)}&command=${encodeURIComponent(command)}`, {}, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
     } catch (e) { alert("Lỗi kết nối bộ điều khiển IoT"); }
@@ -106,12 +106,12 @@ export default function App() {
 
     const fetchData = async () => {
       try {
-        const histRes = await axios.get('https://jjrhb-1-53-239-68.free.pinggy.net/api/tracking/history', { headers });
+        const histRes = await axios.get('https://iot-cloude.onrender.com/api/tracking/history', { headers });
         setHistory(histRes.data);
-        const parkRes = await axios.get('https://jjrhb-1-53-239-68.free.pinggy.net/api/parking', { headers });
+        const parkRes = await axios.get('https://iot-cloude.onrender.com/api/parking', { headers });
         setParkingSpots(parkRes.data);
         if (auth.role === 'Admin') {
-          const anlRes = await axios.get('https://jjrhb-1-53-239-68.free.pinggy.net/api/tracking/analytics', { headers });
+          const anlRes = await axios.get('https://iot-cloude.onrender.com/api/tracking/analytics', { headers });
           setAnalytics(anlRes.data);
         }
       } catch (e: any) { if (e.response?.status === 401) handleLogout(); }
@@ -167,11 +167,11 @@ export default function App() {
   const handleBookSpot = async (spotId: number) => {
     if (!auth?.vehicleId) return alert("Chỉ tài xế mới có quyền điều khiển bãi đỗ!");
     try {
-      await axios.post(`http://localhost:5230/api/parking/book?vehicleId=${auth.vehicleId}&spotId=${spotId}`, {}, {
+      await axios.post(`https://iot-cloude.onrender.com/api/parking/book?vehicleId=${auth.vehicleId}&spotId=${spotId}`, {}, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
       alert(`✅ Đã đặt thành công bãi đỗ số ${spotId}!`);
-      const parkRes = await axios.get('https://jjrhb-1-53-239-68.free.pinggy.net/api/parking', { headers: { Authorization: `Bearer ${auth.token}` } });
+      const parkRes = await axios.get('https://iot-cloude.onrender.com/api/parking', { headers: { Authorization: `Bearer ${auth.token}` } });
       setParkingSpots(parkRes.data);
     } catch (error: any) { alert("Lỗi gửi lệnh."); }
   };
