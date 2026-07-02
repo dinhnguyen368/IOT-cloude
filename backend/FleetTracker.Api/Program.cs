@@ -24,7 +24,10 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connect
 builder.Services.AddHostedService<MqttHostedService>();
 
 // SignalR & JWT
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(options => {
+    options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+    options.ClientTimeoutInterval = TimeSpan.FromMinutes(2);
+});
 var jwtKey = "DayLaMotChuoiBaoMatCucKyDaiVaPhucTapChoKhoaHocIOTLogistics2024!";
 var keyBytes = Encoding.ASCII.GetBytes(jwtKey);
 

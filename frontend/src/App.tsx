@@ -5,8 +5,6 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip as Recharts
 import * as signalR from '@microsoft/signalr';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-
-// --- CẤU HÌNH ICON BẢN ĐỒ ---
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 const BASE_URL = "https://iot-cloude.onrender.com";
@@ -124,6 +122,8 @@ export default function App() {
       .withUrl("https://iot-cloude.onrender.com/trackingHub", { accessTokenFactory: () => currentToken })
       .withAutomaticReconnect()
       .build();
+      connection.serverTimeoutInMilliseconds = 120000; // 2 phút không thấy server mới tính là sập
+connection.keepAliveIntervalInMilliseconds = 15000; // Cứ 15 giây gửi 1 gói tin Ping để giữ đường truyền luôn nóng
 
     connection.start().catch(err => console.error("SignalR Lỗi kết nối:", err));
     
