@@ -220,6 +220,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.Run();
+var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
+app.Run($"http://0.0.0.0:{port}");
 
 public class LoginRequest { public string Username { get; set; } = ""; public string Password { get; set; } = ""; }
