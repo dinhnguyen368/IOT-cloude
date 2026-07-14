@@ -395,3 +395,7 @@
 1784002759: mosquitto version 2.0.15 running
 1784004175: mosquitto version 2.0.15 terminating
 1784004175: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1784010305: mosquitto version 2.0.15 starting
+1784010305: Config loaded from /mosquitto/config/mosquitto.conf.
+1784010305: Opening ipv4 listen socket on port 1883.
+1784010305: mosquitto version 2.0.15 running
